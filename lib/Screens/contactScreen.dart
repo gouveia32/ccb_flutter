@@ -1,9 +1,10 @@
 import 'dart:async';
-import '../Data/Contact_Model.dart';
-import '../Screens/contact_detail_page.dart';
 import 'package:flutter/material.dart';
+import '../Data/Contact_Model.dart';
+import 'contactDetailScreen.dart';
 
 class ContactListPage extends StatefulWidget {
+    static const routeName = '/contact-list';
   @override
   State<StatefulWidget> createState() {
     return ListPageState();
@@ -12,57 +13,64 @@ class ContactListPage extends StatefulWidget {
 
 class ListPageState extends State<ContactListPage> {
   Model _model = Model();
+  bool carregado = false;
 
   List<Contact> _contactList;
   int _numberOfContacts = 0;
-  
-  static const routeName = '/contact-list';
-
+ 
   @override
   Widget build(BuildContext context) {
-    //mostraBotao = true;
-
-    //corBotao = Colors.green;
-    if (_contactList == null) {
-      _contactList = List<Contact>();
-      _updateListView();
-    }
+      if (_contactList == null) {
+        _contactList = List<Contact>();
+        _updateListView();
+      }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Address Book',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        title: Text('Contatos'),
       ),
-      body: SafeArea(
-        child: _getContactsListView(),
-      ),
+      body: carregado
+            ? SafeArea(
+                child: _getContactsListView(),
+              )
+            : Center(
+                child: new CircularProgressIndicator()
+              ),
+
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black26,
+        
+        backgroundColor: Colors.blue[300],
         onPressed: () {
-          _showDetailPage(Contact('', '', '', '', '', ''), 'Add Contact');
+          //_showDetailPage(Contact('', '', '', '', '', ''), 'Adicionar Contato');
+          
+          Navigator.push(
+            context,
+              MaterialPageRoute(builder: (context) => ContactDetail(
+                Contact('', '', '', '', '', ''), 'Novo Contato'  
+              )),
+          );
         },
-        tooltip: 'Add Contact',
+        tooltip: 'Adicionar Cliente',
         child: Icon(
           Icons.add,
           color: Colors.white,
         ),
       ),
-      floatingActionButtonLocation:    
-      FloatingActionButtonLocation.endTop,      
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
+      
   }
 
-  ListView _getContactsListView() {
+    ListView _getContactsListView() {
     
     return ListView.builder(
       itemCount: _numberOfContacts,
       itemBuilder: (BuildContext context, int position) {
         return Card(
-          elevation: 2.0,
+          elevation: 3.0,
+          borderOnForeground: true,
+          color: Colors.green[100],
+          semanticContainer: true,
           child: ListTile(
             title: Text(
               this._contactList[position].name,
@@ -78,13 +86,13 @@ class ListPageState extends State<ContactListPage> {
               },
             ),
             onTap: () {
-              _showDetailPage(this._contactList[position], 'Edit Contact');
-              //Navigator.push(
-              //    context,
-              //    MaterialPageRoute(builder: (context) => ContactDetail(
-              //      this._contactList[position], 'Alterar Contato'  
-              //    )),
-              //  );
+              //_showDetailPage(this._contactList[position], 'Edit Contact');
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ContactDetail(
+                    this._contactList[position], 'Alterar Contato'  
+                  )),
+                );
             },
           ),
         );
@@ -125,11 +133,13 @@ class ListPageState extends State<ContactListPage> {
       setState(() {
         this._contactList = contactList;
         this._numberOfContacts = contactList.length;
+        carregado = true;
       });
-    }).catchError((e) {
+    }).catchError((e) async {
       print(e.toString());
-      showAlertDialog(context, "Database error", e.toString()); // this is for me, so showing actual exception. suggest something more user-friendly in a real app.
+      //showAlertDialog(context, "Database error", e.toString()); // this is for me, so showing actual exception. suggest something more user-friendly in a real app.
     });
   }
 
 }
+

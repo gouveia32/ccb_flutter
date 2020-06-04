@@ -2,6 +2,7 @@ import '../Data/Contact_Model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+
 class ContactDetail extends StatefulWidget {
   final String _appBarTitle;
   final Contact _contact;
@@ -17,8 +18,6 @@ class ContactDetail extends StatefulWidget {
 class ContactDetailState extends State<ContactDetail> {
   Model _model = Model();
 
-  static const routeName = '/contact-detail-list';
- 
   final String _appBarTitle;
   Contact _contact;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -43,7 +42,7 @@ class ContactDetailState extends State<ContactDetail> {
   void initState() {
     super.initState();
 
-    if (_appBarTitle == "Edit Contact") {
+    if (_appBarTitle == "Alterar Contato") {
       _nameController.text = _contact.name;
       _phoneController.text = _contact.homePhone;
       _mobilePhoneController.text = _contact.mobilePhone;
@@ -51,7 +50,6 @@ class ContactDetailState extends State<ContactDetail> {
       _emailController.text = _contact.email;
       _notesController.text = _contact.notes;
     }
-
   }
 
   @override
@@ -68,12 +66,14 @@ class ContactDetailState extends State<ContactDetail> {
     _mobilePhoneFocus.dispose();
     _emailFocus.dispose();
     _addressFocus.dispose();
-    _notesFocus.dispose();    super.dispose();
+    _notesFocus.dispose();
+    
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = Theme.of(context).textTheme.bodyText1;
+    TextStyle textStyle = Theme.of(context).textTheme.title;
     return WillPopScope(
       onWillPop: () {
         // For when user presses Back navigation button in device navigationBar (Android)

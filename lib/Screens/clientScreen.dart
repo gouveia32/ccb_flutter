@@ -1,13 +1,12 @@
 import 'dart:async';
-import 'package:ccb_flutter/Screens/home_page.dart';
-
-import '../Data/Client_Model.dart';
-import '../Screens/client_detail_page.dart';
 import 'package:flutter/material.dart';
+import '../Data/Client_Model.dart';
 
+import 'clientDetailScreen.dart';
 
 class ClientListPage extends StatefulWidget {
-  @override static const routeName = '/client-list';
+  @override
+  static const routeName = '/client-list';
 
   State<StatefulWidget> createState() {
     return ClientListPageState();
@@ -15,47 +14,37 @@ class ClientListPage extends StatefulWidget {
 }
 
 class ClientListPageState extends State<ClientListPage> {
+  static const routeName = '/client-screen';
   Model _model = Model();
   bool carregado = false;
+  int _skip = 0;
+  int _take = 10;
 
   List<Client> _clientList;
   int _numberOfClients = 0;
 
   @override
   Widget build(BuildContext context) {
-
-    //corBotao = Colors.pink;
     if (_clientList == null) {
       _clientList = List<Client>();
-      _updateListView();
+      _updateListView(_skip, _take);
     }
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepOrangeAccent,
-        title: Text(
-          'Cadastro de Clientes',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        title: Text('Clientes'),
       ),
       body: carregado
-            ? SafeArea(
-                child: _getClientsListView(),
-              )
-            : Center(
-                child: new CircularProgressIndicator()
-              ),
-
+          ? SafeArea(
+              child: _getClientsListView(),
+            )
+          : Center(child: new CircularProgressIndicator()),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black26,
+        backgroundColor: Colors.blueAccent,
         onPressed: () {
-          //_showDetailPage(Client(0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0.0), 'Adicionar Cliente');
-          Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                );
+          _showDetailPage(
+              Client(0, '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+                  0.0),
+              'Adicionar Cliente');
         },
         tooltip: 'Adicionar Cliente',
         child: Icon(
@@ -63,17 +52,25 @@ class ClientListPageState extends State<ClientListPage> {
           color: Colors.white,
         ),
       ),
-      floatingActionButtonLocation:    
-      FloatingActionButtonLocation.endTop,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
 
   ListView _getClientsListView() {
-    return  ListView.builder(
+    return ListView.builder(
       itemCount: _numberOfClients,
       itemBuilder: (BuildContext context, int position) {
+        //var values = _clientList;
+        if (position >= _clientList.length - 1) {
+          _skip++;
+          //_updateListView(_skip, _take);
+        }
+
         return Card(
-          elevation: 2.0,
+          elevation: 3.0,
+          borderOnForeground: true,
+          color: Colors.blue[100],
+          semanticContainer: true,
           child: ListTile(
             title: Text(
               this._clientList[position].nome,
@@ -90,12 +87,6 @@ class ClientListPageState extends State<ClientListPage> {
             ),
             onTap: () {
               _showDetailPage(this._clientList[position], 'Alterar Cliente');
-              //Navigator.push(
-              //    context,
-              //    MaterialPageRoute(builder: (context) => ClientDetail(
-              //      this._clientList[position], 'Alterar Cliente'  
-              //    )),
-              //  );
             },
           ),
         );
@@ -107,7 +98,7 @@ class ClientListPageState extends State<ClientListPage> {
     Future<void> clientDeleteFuture = _model.deleteClient(client);
     clientDeleteFuture.then((foo) {
       _showSnackBar(context, "O Cliente foi apagado.");
-      _updateListView();
+      _updateListView(_skip, _take);
     }).catchError((e) {
       print(e.toString());
       _showSnackBar(context, "Erro ao tentar apagar o cliente!");
@@ -122,14 +113,15 @@ class ClientListPageState extends State<ClientListPage> {
   void _showDetailPage(Client client, String title) async {
     bool result =
         await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return  ClientDetail(client, title);
+      return ClientDetail(client, title);
     }));
 
     if (result == true) {
-      _updateListView();
+      _updateListView(_skip, _take);
     }
   }
-  void _updateListView() {
+
+  void _updateListView(int offset, [int maxRec]) {
     Future<List<Client>> contactListFuture = _model.getClientsList();
     contactListFuture.then((clientList) {
       setState(() {
@@ -139,8 +131,8 @@ class ClientListPageState extends State<ClientListPage> {
       });
     }).catchError((e) {
       print(e.toString());
-      showAlertDialog(context, "Database error", e.toString()); // this is for me, so showing actual exception. suggest something more user-friendly in a real app.
+      showAlertDialog(context, "Database error",
+          e.toString()); // this is for me, so showing actual exception. suggest something more user-friendly in a real app.
     });
   }
-
 }

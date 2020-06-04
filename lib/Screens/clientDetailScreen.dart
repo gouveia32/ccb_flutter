@@ -121,7 +121,7 @@ class ClientDetailState extends State<ClientDetail> {
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                //_returnToHomePage(false);
+                _returnToHomePage(false);
 
               }),
         ),
