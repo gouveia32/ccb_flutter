@@ -3,7 +3,7 @@ import 'package:shopapp/screens/contactScreen.dart';
 
 import '../screens/user_products_screen.dart';
 import '../screens/orders_screen.dart';
-import '../Screens/clientScreen.dart';
+import '../Screens/clienteScreen.dart';
 
 class AppDrawer extends StatelessWidget {
   @override

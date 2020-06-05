@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../Data/Client_Model.dart';
+import '../Data/Cliente_Model.dart';
 
-import 'clientDetailScreen.dart';
+import 'clienteDetailScreen.dart';
 
 class ClientListPage extends StatefulWidget {
   @override

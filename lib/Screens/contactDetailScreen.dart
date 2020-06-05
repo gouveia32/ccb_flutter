@@ -2,7 +2,6 @@ import '../Data/Contact_Model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-
 class ContactDetail extends StatefulWidget {
   final String _appBarTitle;
   final Contact _contact;
@@ -67,13 +66,13 @@ class ContactDetailState extends State<ContactDetail> {
     _emailFocus.dispose();
     _addressFocus.dispose();
     _notesFocus.dispose();
-    
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = Theme.of(context).textTheme.title;
+    TextStyle textStyle = Theme.of(context).textTheme.headline5;
     return WillPopScope(
       onWillPop: () {
         // For when user presses Back navigation button in device navigationBar (Android)
@@ -111,8 +110,7 @@ class ContactDetailState extends State<ContactDetail> {
                         autocorrect: false,
                         textInputAction: TextInputAction.next,
                         focusNode: _nameFocus,
-                        enabled: (_appBarTitle ==
-                            'Add Contact'), // name is the key. can't change it. must delete and re-create.
+                        //enabled: (_appBarTitle == 'Add Contact'), // name is the key. can't change it. must delete and re-create.
                         onFieldSubmitted: (term) {
                           _nameFocus.unfocus();
                           FocusScope.of(context).requestFocus(_phoneFocus);
@@ -309,7 +307,7 @@ class ContactDetailState extends State<ContactDetail> {
   }
 
   void _saveorUpdateContact() async {
-    if (_appBarTitle != "Add Contact") {
+    if (_appBarTitle != "Novo Contato") {
       try {
         await _model.updateContact(_contact);
         _returnToHomePage(true);

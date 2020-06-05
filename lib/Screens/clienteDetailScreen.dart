@@ -1,4 +1,4 @@
-import '../Data/Client_Model.dart';
+import '../Data/Cliente_Model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -24,10 +24,12 @@ class ClientDetailState extends State<ClientDetail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nomeController = TextEditingController();
-  final TextEditingController _contatoFuncaoController = TextEditingController();
+  final TextEditingController _contatoFuncaoController =
+      TextEditingController();
   final TextEditingController _contatoNomeController = TextEditingController();
   final TextEditingController _cgcCpfController = TextEditingController();
-  final TextEditingController _inscrEstadualController = TextEditingController();
+  final TextEditingController _inscrEstadualController =
+      TextEditingController();
   final TextEditingController _enderecoController = TextEditingController();
   final TextEditingController _cidadeController = TextEditingController();
   final TextEditingController _estadoController = TextEditingController();
@@ -63,7 +65,7 @@ class ClientDetailState extends State<ClientDetail> {
       _nomeController.text = _client.nome;
       _contatoFuncaoController.text = _client.contato_funcao;
       _contatoNomeController.text = _client.contato_nome;
-      
+
       _cgcCpfController.text = _client.cgc_cpf;
       _inscrEstadualController.text = _client.inscr_estadual;
       _enderecoController.text = _client.endereco;
@@ -96,7 +98,7 @@ class ClientDetailState extends State<ClientDetail> {
     _emailController.dispose();
     _obsController.dispose();
     _precoBaseController.dispose();
-    
+
     super.dispose();
   }
 
@@ -122,7 +124,6 @@ class ClientDetailState extends State<ClientDetail> {
               icon: Icon(Icons.arrow_back),
               onPressed: () {
                 _returnToHomePage(false);
-
               }),
         ),
         body: Center(
@@ -187,13 +188,13 @@ class ClientDetailState extends State<ClientDetail> {
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.contato_nome = _contatoFuncaoController.text;
+                                _client.contato_nome =
+                                    _contatoFuncaoController.text;
                                 if (value.length > 19) {
                                   return "Telefone deve ter no máximo que 20 caracters";
                                 }
                               },
-                              decoration:
-                                  _inputDecoration(textStyle, "Função"),
+                              decoration: _inputDecoration(textStyle, "Função"),
                             ),
                           ),
                         ),
@@ -280,8 +281,7 @@ class ClientDetailState extends State<ClientDetail> {
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.telefone2 =
-                                    _telefone2Controller.text;
+                                _client.telefone2 = _telefone2Controller.text;
                                 if (value.length > 19) {
                                   return "Telefone deve ter no máximo 20 caracters";
                                 }
@@ -310,8 +310,7 @@ class ClientDetailState extends State<ClientDetail> {
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.telefone3 =
-                                    _telefone2Controller.text;
+                                _client.telefone3 = _telefone2Controller.text;
                                 if (value.length > 19) {
                                   return "Telefone deve ter no máximo 20 caracters";
                                 }
@@ -374,12 +373,12 @@ class ClientDetailState extends State<ClientDetail> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                      Container(
+                        Container(
                           width: 220,
                           height: 50,
                           child: Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: 15.0, left: 6.0, right: 6.0),
+                            padding: const EdgeInsets.only(
+                                bottom: 15.0, left: 6.0, right: 6.0),
                             child: TextFormField(
                               controller: _cidadeController,
                               //keyboardType: TextInputType.phone,
@@ -393,14 +392,12 @@ class ClientDetailState extends State<ClientDetail> {
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.cidade =
-                                    _cidadeController.text;
+                                _client.cidade = _cidadeController.text;
                                 if (value.length > 19) {
                                   return "O nome da cidade pode ter no máximo 20 caracters";
                                 }
                               },
-                              decoration:
-                                  _inputDecoration(textStyle, "Cidade"),
+                              decoration: _inputDecoration(textStyle, "Cidade"),
                             ),
                           ),
                         ),
@@ -418,22 +415,19 @@ class ClientDetailState extends State<ClientDetail> {
                               focusNode: _estadoFocus,
                               onFieldSubmitted: (term) {
                                 _cidadeFocus.unfocus();
-                                FocusScope.of(context)
-                                    .requestFocus(_cepFocus);
+                                FocusScope.of(context).requestFocus(_cepFocus);
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.estado =
-                                    _estadoController.text;
+                                _client.estado = _estadoController.text;
                                 if (value.length > 19) {
                                   return "O nome do estado pode ter no máximo 20 caracters";
                                 }
                               },
-                              decoration:
-                                  _inputDecoration(textStyle, "UF"),
+                              decoration: _inputDecoration(textStyle, "UF"),
                             ),
                           ),
-                        ),  
+                        ),
                         Container(
                           width: 120,
                           height: 50,
@@ -448,22 +442,21 @@ class ClientDetailState extends State<ClientDetail> {
                               focusNode: _cepFocus,
                               onFieldSubmitted: (term) {
                                 _cidadeFocus.unfocus();
-                                FocusScope.of(context)
-                                    .requestFocus(_obsFocus);
+                                FocusScope.of(context).requestFocus(_obsFocus);
                               },
-                              style: TextStyle(fontSize: 14.0,),
+                              style: TextStyle(
+                                fontSize: 14.0,
+                              ),
                               validator: (String value) {
-                                _client.cep =
-                                    _cepController.text;
+                                _client.cep = _cepController.text;
                                 if (value.length > 11) {
                                   return "O CEP pode ter no máximo 12 caracters";
                                 }
                               },
-                              decoration:
-                                  _inputDecoration(textStyle, "CEP"),
+                              decoration: _inputDecoration(textStyle, "CEP"),
                             ),
                           ),
-                        ),  
+                        ),
                       ],
                     ),
                     // Notes

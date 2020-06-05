@@ -1,4 +1,4 @@
-import './database_helper.dart';
+import './Contact_Db_helper.dart';
 
 class Model {
   static final Model _model = new Model._internal();
@@ -9,35 +9,27 @@ class Model {
 
   Model._internal();
 
-
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-
   Future<void> insertContact(Contact contact) async {
-
     return _databaseHelper.insertContact(contact);
   }
 
   Future<int> updateContact(Contact contact) async {
-
     return _databaseHelper.updateContact(contact);
   }
 
   Future<void> deleteContact(Contact contact) async {
-
     return _databaseHelper.deleteContact(contact);
   }
 
   Future<List<Contact>> getContactsList() async {
-
     return _databaseHelper.getContactsList();
   }
-
 }
 
-
-
 class Contact {
+  int _id;
   String _name;
   String _address;
   String _homePhone;
@@ -45,9 +37,10 @@ class Contact {
   String _email;
   String _notes;
 
-  Contact(this._name, this._address, this._homePhone, this._mobilePhone,
-      this._email, this._notes);
+  Contact(this._id, this._name, this._address, this._homePhone,
+      this._mobilePhone, this._email, this._notes);
 
+  int get id => _id;
   String get name => _name;
   String get homePhone => _homePhone;
   String get mobilePhone => _mobilePhone;
@@ -55,6 +48,11 @@ class Contact {
   String get address => _address;
   String get notes => _notes;
 
+  set id(int newId) {
+    if (newId >= 0) {
+      this._id = newId;
+    }
+  }
 
   set name(String newName) {
     if (newName.length <= 80) {
@@ -62,7 +60,7 @@ class Contact {
     }
   }
 
- set homePhone(String newHomePhone) {
+  set homePhone(String newHomePhone) {
     if (newHomePhone.length <= 30) {
       this._homePhone = newHomePhone;
     }
@@ -91,6 +89,4 @@ class Contact {
       this._notes = newNotes;
     }
   }
-
 }
-
