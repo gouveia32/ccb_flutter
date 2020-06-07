@@ -4,6 +4,7 @@ import 'package:shopapp/screens/contactScreen.dart';
 import '../screens/user_products_screen.dart';
 import '../screens/orders_screen.dart';
 import '../Screens/clienteScreen.dart';
+import '../Screens/linhaScreen.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -58,6 +59,14 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context);
               Navigator.of(context).pushNamed(ClientListPage.routeName);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.threed_rotation),
+            title: Text('Linhas'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).pushNamed(LinhaListPage.routeName);
             },
           ),
         ],

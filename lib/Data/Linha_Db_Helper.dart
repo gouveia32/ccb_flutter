@@ -1,6 +1,7 @@
 import 'dart:async';
 import './Linha_Model.dart';
 import 'package:mysql1/mysql1.dart';
+import 'Constants.dart';
 
 class DatabaseHelper {
   static DatabaseHelper _databaseHelper;
@@ -17,13 +18,6 @@ class DatabaseHelper {
 
   Future<MySqlConnection> get databaseConnection async {
     try {
-      var host = '10.0.2.2'; //e.g. 196.70.125.43
-      var user = 'root';
-      var db = 'my_store';
-      var password = 'ebtaju';
-
-      assert(host != 'ebtaju');
-
       _databaseConnection = await MySqlConnection.connect(ConnectionSettings(
           host: host, port: 3306, user: user, db: db, password: password));
     } catch (e) {
@@ -33,30 +27,25 @@ class DatabaseHelper {
     return _databaseConnection;
   }
 
-  Future<void> insertClient(Client client) async {
+  Future<void> insertLinha(Linha linha) async {
     MySqlConnection connection = await this.databaseConnection;
 
     if (connection != null) {
       try {
         await connection.query(
-            "INSERT INTO Clientes (nome,contato_funcao,contato_nome,cgc_cpf," +
-                "inscr_estadual,endereco,cidade,estado,telefone1,telefone2," +
-                "telefone3,email,obs,preco_base) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO Linhas (codigo,nome,material_nome,material_fabricante,material_tipo," +
+                "cor,estoque_1,estoque_2,minimo,pedido) VALUES (?,?,?,?,?,?,?,?,?,?)",
             [
-              client.nome,
-              client.contato_funcao,
-              client.contato_nome,
-              client.cgc_cpf,
-              client.endereco,
-              client.cidade,
-              client.estado,
-              client.cep,
-              client.telefone1,
-              client.telefone2,
-              client.telefone3,
-              client.email,
-              client.obs,
-              client.preco_base
+              linha.codigo,
+              linha.nome,
+              linha.materialNome,
+              linha.materialFabricante,
+              linha.materialTipo,
+              linha.cor,
+              linha.estoque_1,
+              linha.estoque_2,
+              linha.minimo,
+              linha.pedido,
             ]);
         connection.close();
       } catch (e) {
@@ -66,26 +55,22 @@ class DatabaseHelper {
     }
   }
 
-  Future<int> updateClient(Client client) async {
+  Future<int> updateLinha(Linha linha) async {
     MySqlConnection connection = await this.databaseConnection;
 
     if (connection != null) {
       try {
         // Update query format is: Update <table> Set Address = 'New Address', Zip = 'New Zip' where Name is 'Pete'
-        String queryString = "UPDATE clientes set nome = '${client.nome}'," +
-            " contato_funcao = '${client.contato_funcao}'," +
-            " contato_nome = '${client.contato_nome}', " +
-            " endereco = '${client.endereco}'," +
-            " cidade = '${client.cidade}'," +
-            " estado = '${client.estado}'," +
-            " cep = '${client.cep}'," +
-            " telefone1 = '${client.telefone1}'," +
-            " telefone2 = '${client.telefone2}'," +
-            " telefone3 = '${client.telefone3}'," +
-            " email = '${client.email}'," +
-            " obs = '${client.obs}'," +
-            " preco_base = '${client.preco_base}'" +
-            " WHERE id = '${client.id}'";
+        String queryString = "UPDATE Linhas set nome = '${linha.nome}'," +
+            " material_nome = '${linha.materialNome}'," +
+            " material_fabricante = '${linha.materialFabricante}', " +
+            " material_tipo = '${linha.materialTipo}'," +
+            " cor = '${linha.cor}'," +
+            " estoque_1 = '${linha.estoque_1}'," +
+            " estoque_2 = '${linha.estoque_1}'," +
+            " minimo = '${linha.minimo}'," +
+            " pedido = '${linha.pedido}'" +
+            " WHERE codigo = '${linha.codigo}'";
         await connection.query(queryString);
         connection.close();
       } catch (e) {
@@ -95,13 +80,14 @@ class DatabaseHelper {
     return 0;
   }
 
-  Future<void> deleteClient(Client client) async {
+  Future<void> deleteLinha(Linha linha) async {
     MySqlConnection connection = await this.databaseConnection;
 
     if (connection != null) {
       try {
         // Delete also requires quotes around strings
-        String queryString = "DELETE from clientes WHERE id = '${client.id}'";
+        String queryString =
+            "DELETE from Linhas WHERE codigo = '${linha.codigo}'";
         await connection.query(queryString);
         connection.close();
       } catch (e) {
@@ -111,13 +97,19 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<Client>> getClientsList() async {
+  Future<List<Linha>> getLinhasList([String filter = null]) async {
     MySqlConnection connection = await this.databaseConnection;
 
-    List<Client> listResults = List();
-    var sql = "SELECT id, nome,contato_funcao,contato_nome,cgc_cpf," +
-        "inscr_estadual,endereco,cidade,estado,cep,telefone1,telefone2," +
-        "telefone3,email,obs,preco_base FROM clientes ORDER BY nome";
+    List<Linha> listResults = List();
+    var sql = "SELECT codigo, nome,material_nome,material_fabricante," +
+        "material_tipo,cor,estoque_1,estoque_2,minimo,pedido " +
+        "FROM Linhas";
+    if (filter == null) {
+      sql += " ORDER BY nome";
+    } else {
+      sql +=
+          " WHERE codigo = '${filter}' OR nome like '%${filter}%' ORDER BY nome";
+    }
 
     if (connection != null) {
       Results results = await connection.query(sql);
@@ -125,23 +117,8 @@ class DatabaseHelper {
       connection.close();
 
       for (var row in results) {
-        listResults.add(Client(
-            row[0],
-            row[1],
-            row[2],
-            row[3],
-            row[4],
-            row[5],
-            row[6],
-            row[7],
-            row[8],
-            row[9],
-            row[10],
-            row[11],
-            row[12],
-            row[13],
-            row[14],
-            row[15]));
+        listResults.add(Linha(row[0], row[1], row[2], row[3], row[4], row[5],
+            row[6], row[7], row[8], row[9]));
       }
     }
     return listResults;

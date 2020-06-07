@@ -11,58 +11,63 @@ class Model {
 
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-  Future<void> insertClient(Client client) async {
-    return _databaseHelper.insertClient(client);
+  Future<void> insertLinha(Linha linha) async {
+    return _databaseHelper.insertLinha(linha);
   }
 
-  Future<int> updateClient(Client client) async {
-    return _databaseHelper.updateClient(client);
+  Future<int> updateLinha(Linha linha) async {
+    return _databaseHelper.updateLinha(linha);
   }
 
-  Future<void> deleteClient(Client client) async {
-    return _databaseHelper.deleteClient(client);
+  Future<void> deleteLinha(Linha linha) async {
+    return _databaseHelper.deleteLinha(linha);
   }
 
-  Future<List<Client>> getClientsList() async {
-    return _databaseHelper.getClientsList();
+  Future<List<Linha>> getLinhasList([String filter = null]) async {
+    return _databaseHelper.getLinhasList(filter);
   }
 }
 
-class Client {
-  int _id;
+class Linha {
+  String _codigo;
   String _nome;
-  String _material_nome;
-  String _material_fabricante;
-  String _material_tipo;
+  String _materialNome;
+  String _materialFabricante;
+  String _materialTipo;
   int _cor;
   int _estoque1;
   int _estoque2;
   int _minimo;
   int _pedido;
 
-  Client(
-      this._id,
+  Linha(
+      this._codigo,
       this._nome,
-      this._material_nome,
-      this._material_fabricante,
-      this._material_tipo,
+      this._materialNome,
+      this._materialFabricante,
+      this._materialTipo,
       this._cor,
       this._estoque1,
       this._estoque2,
       this._minimo,
-      this._pedido,
+      this._pedido);
 
-  int get id => _id;
+  String get codigo => _codigo;
   String get nome => _nome;
-  String get material_nome => __material_nome;
-  String get material_fabricante => __material_fabricante;
-  String get material_tipo => __material_tipo;
-  String get cor => _cor;
-  String get estoque1 => _estoque1;
-  String get estoque2 => _estoque2;
-  String get minimo => _minimo;
-  String get pedido => _pedido;
+  String get materialNome => _materialNome;
+  String get materialFabricante => _materialFabricante;
+  String get materialTipo => _materialTipo;
+  int get cor => _cor;
+  int get estoque_1 => _estoque1;
+  int get estoque_2 => _estoque2;
+  int get minimo => _minimo;
+  int get pedido => _pedido;
 
+  set codigo(String novoCodigo) {
+    if (novoCodigo.length <= 5) {
+      this._nome = novoCodigo;
+    }
+  }
 
   set nome(String novoNome) {
     if (novoNome.length <= 80) {
@@ -70,45 +75,51 @@ class Client {
     }
   }
 
-  set material_nome(String novoMaterialNome) {
+  set materialNome(String novoMaterialNome) {
     if (novoMaterialNome.length <= 20) {
-      this._material_nome = novoMaterialNome;
+      this._materialNome = novoMaterialNome;
     }
   }
-  set material_fabricante(String novoMaterialFabricante) {
+
+  set materialFabricante(String novoMaterialFabricante) {
     if (novoMaterialFabricante.length <= 20) {
-      this._material_fabricante = novoMaterialFabricante;
+      this._materialFabricante = novoMaterialFabricante;
     }
   }
-  set material_tipo(String novoMaterialTipo) {
+
+  set materialTipo(String novoMaterialTipo) {
     if (novoMaterialTipo.length <= 20) {
-      this._material_tipo = novoMaterialTipo;
+      this._materialTipo = novoMaterialTipo;
     }
   }
+
   set cor(int novaCor) {
     if (novaCor >= 0) {
       this._cor = novaCor;
     }
   }
-  set estoque1(int novoEstoque1) {
+
+  set estoque_1(int novoEstoque1) {
     if (novoEstoque1 >= 0) {
       this._estoque1 = novoEstoque1;
     }
   }
-  set estoque2(int novoEstoque2) {
+
+  set estoque_2(int novoEstoque2) {
     if (novoEstoque2 >= 0) {
       this._estoque2 = novoEstoque2;
     }
   }
+
   set minimo(int novoMinimo) {
     if (novoMinimo >= 0) {
       this._minimo = novoMinimo;
     }
   }
+
   set pedido(int novoPedido) {
     if (novoPedido >= 0) {
       this._pedido = novoPedido;
     }
   }
-
 }
