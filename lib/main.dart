@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
           UserProductScreen.routeName: (ctx) => UserProductScreen(),
           EditProductScreen.routeName: (ctx) => EditProductScreen(),
           ContactListPage.routeName: (ctx) => ContactListPage(),
-          ClientListPage.routeName: (ctx) => ClientListPage(),
+          ClienteListPage.routeName: (ctx) => ClienteListPage(),
           LinhaListPage.routeName: (ctx) => LinhaListPage(),
         },
       ),

@@ -58,7 +58,7 @@ class AppDrawer extends StatelessWidget {
             title: Text('Clientes'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.of(context).pushNamed(ClientListPage.routeName);
+              Navigator.of(context).pushNamed(ClienteListPage.routeName);
             },
           ),
           ListTile(

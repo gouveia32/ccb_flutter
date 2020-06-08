@@ -11,30 +11,30 @@ class Model {
 
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-  Future<void> insertClient(Client client) async {
-    return _databaseHelper.insertClient(client);
+  Future<void> insertCliente(Cliente cliente) async {
+    return _databaseHelper.insertCliente(cliente);
   }
 
-  Future<int> updateClient(Client client) async {
-    return _databaseHelper.updateClient(client);
+  Future<int> updateCliente(Cliente cliente) async {
+    return _databaseHelper.updateCliente(cliente);
   }
 
-  Future<void> deleteClient(Client client) async {
-    return _databaseHelper.deleteClient(client);
+  Future<void> deleteCliente(Cliente cliente) async {
+    return _databaseHelper.deleteCliente(cliente);
   }
 
-  Future<List<Client>> getClientsList() async {
-    return _databaseHelper.getClientsList();
+  Future<List<Cliente>> getClientesList([String filter = ""]) async {
+    return _databaseHelper.getClientesList(filter);
   }
 }
 
-class Client {
+class Cliente {
   int _id;
   String _nome;
-  String _contato_funcao;
-  String _contato_nome;
-  String _cgc_cpf;
-  String _inscr_estadual;
+  String _contatoFuncao;
+  String _contatoNome;
+  String _cgcCpf;
+  String _inscrEstadual;
   String _endereco;
   String _cidade;
   String _estado;
@@ -44,15 +44,15 @@ class Client {
   String _telefone3;
   String _email;
   String _obs;
-  double _preco_base;
+  double _precoBase;
 
-  Client(
+  Cliente(
       this._id,
       this._nome,
-      this._contato_funcao,
-      this._contato_nome,
-      this._cgc_cpf,
-      this._inscr_estadual,
+      this._contatoFuncao,
+      this._contatoNome,
+      this._cgcCpf,
+      this._inscrEstadual,
       this._endereco,
       this._cidade,
       this._estado,
@@ -62,14 +62,14 @@ class Client {
       this._telefone3,
       this._email,
       this._obs,
-      this._preco_base);
+      this._precoBase);
 
   int get id => _id;
   String get nome => _nome;
-  String get contato_funcao => _contato_funcao;
-  String get contato_nome => _contato_nome;
-  String get cgc_cpf => _cgc_cpf;
-  String get inscr_estadual => _inscr_estadual;
+  String get contatoFuncao => _contatoFuncao;
+  String get contatoNome => _contatoNome;
+  String get cgcCpf => _cgcCpf;
+  String get inscrEstadual => _inscrEstadual;
   String get endereco => _endereco;
   String get cidade => _cidade;
   String get estado => _estado;
@@ -79,7 +79,7 @@ class Client {
   String get telefone3 => _telefone3;
   String get email => _email;
   String get obs => _obs;
-  double get preco_base => _preco_base;
+  double get precoBase => _precoBase;
 
   set nome(String novoNome) {
     if (novoNome.length <= 80) {
@@ -87,27 +87,27 @@ class Client {
     }
   }
 
-  set contato_funcao(String novoContatoFuncao) {
+  set contatoFuncao(String novoContatoFuncao) {
     if (novoContatoFuncao.length <= 20) {
-      this._contato_funcao = novoContatoFuncao;
+      this._contatoFuncao = novoContatoFuncao;
     }
   }
 
-  set contato_nome(String novoContatoNome) {
+  set contatoNome(String novoContatoNome) {
     if (novoContatoNome.length <= 30) {
-      this._contato_nome = novoContatoNome;
+      this._contatoNome = novoContatoNome;
     }
   }
 
-  set cgc_cpf(String novoCgcCpf) {
+  set cgcCpf(String novoCgcCpf) {
     if (novoCgcCpf.length <= 30) {
-      this._cgc_cpf = novoCgcCpf;
+      this._cgcCpf = novoCgcCpf;
     }
   }
 
-  set inscr_estadual(String novainscrEstadual) {
+  set inscrEstadual(String novainscrEstadual) {
     if (novainscrEstadual.length <= 30) {
-      this._inscr_estadual = novainscrEstadual;
+      this._inscrEstadual = novainscrEstadual;
     }
   }
 
@@ -165,9 +165,9 @@ class Client {
     }
   }
 
-  set preco_base(double novoPrecoBase) {
+  set precoBase(double novoPrecoBase) {
     if (novoPrecoBase < 0.0) {
-      this._preco_base = novoPrecoBase;
+      this._precoBase = novoPrecoBase;
     }
   }
 }

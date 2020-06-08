@@ -2,25 +2,25 @@ import '../Data/Cliente_Model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class ClientDetail extends StatefulWidget {
+class ClienteDetail extends StatefulWidget {
   final String _appBarTitle;
-  final Client _client;
+  final Cliente _cliente;
 
-  ClientDetail(this._client, this._appBarTitle);
+  ClienteDetail(this._cliente, this._appBarTitle);
 
   @override
   State<StatefulWidget> createState() {
-    return ClientDetailState(this._client, this._appBarTitle);
+    return ClienteDetailState(this._cliente, this._appBarTitle);
   }
 }
 
-class ClientDetailState extends State<ClientDetail> {
+class ClienteDetailState extends State<ClienteDetail> {
   Model _model = Model();
 
-  static const routeName = '/client-detail-list';
+  static const routeName = '/cliente-detail-list';
 
   final String _appBarTitle;
-  Client _client;
+  Cliente _cliente;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nomeController = TextEditingController();
@@ -55,29 +55,29 @@ class ClientDetailState extends State<ClientDetail> {
   final FocusNode _obsFocus = FocusNode();
   final FocusNode _precoBaseFocus = FocusNode();
 
-  ClientDetailState(this._client, this._appBarTitle);
+  ClienteDetailState(this._cliente, this._appBarTitle);
 
   @override
   void initState() {
     super.initState();
 
     if (_appBarTitle == "Alterar Cliente") {
-      _nomeController.text = _client.nome;
-      _contatoFuncaoController.text = _client.contato_funcao;
-      _contatoNomeController.text = _client.contato_nome;
+      _nomeController.text = _cliente.nome;
+      _contatoFuncaoController.text = _cliente.contatoFuncao;
+      _contatoNomeController.text = _cliente.contatoNome;
 
-      _cgcCpfController.text = _client.cgc_cpf;
-      _inscrEstadualController.text = _client.inscr_estadual;
-      _enderecoController.text = _client.endereco;
-      _cidadeController.text = _client.cidade;
-      _estadoController.text = _client.estado;
-      _cepController.text = _client.cep;
-      _telefone1Controller.text = _client.telefone1;
-      _telefone2Controller.text = _client.telefone2;
-      _telefone3Controller.text = _client.telefone3;
-      _emailController.text = _client.email;
-      _obsController.text = _client.obs;
-      _precoBaseController.text = _client.preco_base.toString();
+      _cgcCpfController.text = _cliente.cgcCpf;
+      _inscrEstadualController.text = _cliente.inscrEstadual;
+      _enderecoController.text = _cliente.endereco;
+      _cidadeController.text = _cliente.cidade;
+      _estadoController.text = _cliente.estado;
+      _cepController.text = _cliente.cep;
+      _telefone1Controller.text = _cliente.telefone1;
+      _telefone2Controller.text = _cliente.telefone2;
+      _telefone3Controller.text = _cliente.telefone3;
+      _emailController.text = _cliente.email;
+      _obsController.text = _cliente.obs;
+      _precoBaseController.text = _cliente.precoBase.toString();
     }
   }
 
@@ -151,10 +151,10 @@ class ClientDetailState extends State<ClientDetail> {
                         },
                         onSaved: (String value) {
                           print("OnSaved: $value");
-                          _client.nome = value;
+                          _cliente.nome = value;
                         },
                         validator: (String value) {
-                          _client.nome = _nomeController.text;
+                          _cliente.nome = _nomeController.text;
                           if (value.isEmpty) {
                             return 'Nome é obrigatório';
                           } else if (value.length > 119) {
@@ -188,7 +188,7 @@ class ClientDetailState extends State<ClientDetail> {
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.contato_nome =
+                                _cliente.contatoNome =
                                     _contatoFuncaoController.text;
                                 if (value.length > 19) {
                                   return "Telefone deve ter no máximo que 20 caracters";
@@ -217,7 +217,7 @@ class ClientDetailState extends State<ClientDetail> {
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.contato_nome =
+                                _cliente.contatoNome =
                                     _contatoNomeController.text;
                                 if (value.length > 19) {
                                   return "Telefone deve ter no máximo 20 caracters";
@@ -252,7 +252,7 @@ class ClientDetailState extends State<ClientDetail> {
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.telefone1 = _telefone1Controller.text;
+                                _cliente.telefone1 = _telefone1Controller.text;
                                 if (value.length > 19) {
                                   return "Telefone deve ter no máximo que 20 caracters";
                                 }
@@ -281,7 +281,7 @@ class ClientDetailState extends State<ClientDetail> {
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.telefone2 = _telefone2Controller.text;
+                                _cliente.telefone2 = _telefone2Controller.text;
                                 if (value.length > 19) {
                                   return "Telefone deve ter no máximo 20 caracters";
                                 }
@@ -310,7 +310,7 @@ class ClientDetailState extends State<ClientDetail> {
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.telefone3 = _telefone2Controller.text;
+                                _cliente.telefone3 = _telefone2Controller.text;
                                 if (value.length > 19) {
                                   return "Telefone deve ter no máximo 20 caracters";
                                 }
@@ -337,7 +337,7 @@ class ClientDetailState extends State<ClientDetail> {
                           FocusScope.of(context).requestFocus(_enderecoFocus);
                         },
                         validator: (String value) {
-                          _client.email = _emailController.text;
+                          _cliente.email = _emailController.text;
                           if (value.length > 59) {
                             return 'Email deve ter no máximo 60 caracters';
                           }
@@ -361,7 +361,7 @@ class ClientDetailState extends State<ClientDetail> {
                           FocusScope.of(context).requestFocus(_obsFocus);
                         },
                         validator: (String value) {
-                          _client.endereco = _enderecoController.text;
+                          _cliente.endereco = _enderecoController.text;
                           if (value.length > 254) {
                             return 'Endereço deve ser menos que 255 caracteres';
                           }
@@ -392,7 +392,7 @@ class ClientDetailState extends State<ClientDetail> {
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.cidade = _cidadeController.text;
+                                _cliente.cidade = _cidadeController.text;
                                 if (value.length > 19) {
                                   return "O nome da cidade pode ter no máximo 20 caracters";
                                 }
@@ -419,7 +419,7 @@ class ClientDetailState extends State<ClientDetail> {
                               },
                               style: TextStyle(fontSize: 16.0),
                               validator: (String value) {
-                                _client.estado = _estadoController.text;
+                                _cliente.estado = _estadoController.text;
                                 if (value.length > 19) {
                                   return "O nome do estado pode ter no máximo 20 caracters";
                                 }
@@ -448,7 +448,7 @@ class ClientDetailState extends State<ClientDetail> {
                                 fontSize: 14.0,
                               ),
                               validator: (String value) {
-                                _client.cep = _cepController.text;
+                                _cliente.cep = _cepController.text;
                                 if (value.length > 11) {
                                   return "O CEP pode ter no máximo 12 caracters";
                                 }
@@ -474,7 +474,7 @@ class ClientDetailState extends State<ClientDetail> {
                           //FocusScope.of(context).requestFocus(_nameFocus);
                         },
                         validator: (String value) {
-                          _client.obs = _obsController.text;
+                          _cliente.obs = _obsController.text;
                           if (value.length > 254) {
                             return 'A obs deve ser ter no máximo 1024.';
                           }
@@ -524,7 +524,7 @@ class ClientDetailState extends State<ClientDetail> {
   void _saveorUpdateContact() async {
     if (_appBarTitle != "Adicionar Cliente") {
       try {
-        await _model.updateClient(_client);
+        await _model.updateCliente(_cliente);
         _returnToHomePage(true);
       } catch (e) {
         print(e);
@@ -532,7 +532,7 @@ class ClientDetailState extends State<ClientDetail> {
       }
     } else {
       try {
-        await _model.insertClient(_client);
+        await _model.insertCliente(_cliente);
         _returnToHomePage(true);
       } catch (e) {
         print(e);

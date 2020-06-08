@@ -33,7 +33,7 @@ class DatabaseHelper {
     return _databaseConnection;
   }
 
-  Future<void> insertClient(Client client) async {
+  Future<void> insertCliente(Cliente cliente) async {
     MySqlConnection connection = await this.databaseConnection;
 
     if (connection != null) {
@@ -43,20 +43,20 @@ class DatabaseHelper {
                 "inscr_estadual,endereco,cidade,estado,telefone1,telefone2," +
                 "telefone3,email,obs,preco_base) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
             [
-              client.nome,
-              client.contato_funcao,
-              client.contato_nome,
-              client.cgc_cpf,
-              client.endereco,
-              client.cidade,
-              client.estado,
-              client.cep,
-              client.telefone1,
-              client.telefone2,
-              client.telefone3,
-              client.email,
-              client.obs,
-              client.preco_base
+              cliente.nome,
+              cliente.contatoFuncao,
+              cliente.contatoNome,
+              cliente.cgcCpf,
+              cliente.endereco,
+              cliente.cidade,
+              cliente.estado,
+              cliente.cep,
+              cliente.telefone1,
+              cliente.telefone2,
+              cliente.telefone3,
+              cliente.email,
+              cliente.obs,
+              cliente.precoBase
             ]);
         connection.close();
       } catch (e) {
@@ -66,26 +66,26 @@ class DatabaseHelper {
     }
   }
 
-  Future<int> updateClient(Client client) async {
+  Future<int> updateCliente(Cliente cliente) async {
     MySqlConnection connection = await this.databaseConnection;
 
     if (connection != null) {
       try {
         // Update query format is: Update <table> Set Address = 'New Address', Zip = 'New Zip' where Name is 'Pete'
-        String queryString = "UPDATE clientes set nome = '${client.nome}'," +
-            " contato_funcao = '${client.contato_funcao}'," +
-            " contato_nome = '${client.contato_nome}', " +
-            " endereco = '${client.endereco}'," +
-            " cidade = '${client.cidade}'," +
-            " estado = '${client.estado}'," +
-            " cep = '${client.cep}'," +
-            " telefone1 = '${client.telefone1}'," +
-            " telefone2 = '${client.telefone2}'," +
-            " telefone3 = '${client.telefone3}'," +
-            " email = '${client.email}'," +
-            " obs = '${client.obs}'," +
-            " preco_base = '${client.preco_base}'" +
-            " WHERE id = '${client.id}'";
+        String queryString = "UPDATE clientes set nome = '${cliente.nome}'," +
+            " contato_funcao = '${cliente.contatoFuncao}'," +
+            " contato_nome = '${cliente.contatoNome}', " +
+            " endereco = '${cliente.endereco}'," +
+            " cidade = '${cliente.cidade}'," +
+            " estado = '${cliente.estado}'," +
+            " cep = '${cliente.cep}'," +
+            " telefone1 = '${cliente.telefone1}'," +
+            " telefone2 = '${cliente.telefone2}'," +
+            " telefone3 = '${cliente.telefone3}'," +
+            " email = '${cliente.email}'," +
+            " obs = '${cliente.obs}'," +
+            " preco_base = '${cliente.precoBase}'" +
+            " WHERE id = '${cliente.id}'";
         await connection.query(queryString);
         connection.close();
       } catch (e) {
@@ -95,13 +95,13 @@ class DatabaseHelper {
     return 0;
   }
 
-  Future<void> deleteClient(Client client) async {
+  Future<void> deleteCliente(Cliente cliente) async {
     MySqlConnection connection = await this.databaseConnection;
 
     if (connection != null) {
       try {
         // Delete also requires quotes around strings
-        String queryString = "DELETE from clientes WHERE id = '${client.id}'";
+        String queryString = "DELETE from clientes WHERE id = '${cliente.id}'";
         await connection.query(queryString);
         connection.close();
       } catch (e) {
@@ -111,13 +111,20 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<Client>> getClientsList() async {
+  Future<List<Cliente>> getClientesList([String filter = ""]) async {
     MySqlConnection connection = await this.databaseConnection;
 
-    List<Client> listResults = List();
+    List<Cliente> listResults = List();
     var sql = "SELECT id, nome,contato_funcao,contato_nome,cgc_cpf," +
         "inscr_estadual,endereco,cidade,estado,cep,telefone1,telefone2," +
-        "telefone3,email,obs,preco_base FROM clientes ORDER BY nome";
+        "telefone3,email,obs,preco_base FROM clientes ";
+
+    if (filter == null) {
+      sql += " ORDER BY nome";
+    } else {
+      sql +=
+          " WHERE contato_nome like '%${filter}%' OR nome like '%${filter}%' ORDER BY nome";
+    }
 
     if (connection != null) {
       Results results = await connection.query(sql);
@@ -125,7 +132,7 @@ class DatabaseHelper {
       connection.close();
 
       for (var row in results) {
-        listResults.add(Client(
+        listResults.add(Cliente(
             row[0],
             row[1],
             row[2],
