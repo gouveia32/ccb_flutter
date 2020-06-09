@@ -90,29 +90,34 @@ class ListPageState extends State<LinhaListPage> {
           borderOnForeground: true,
           color: Color(this._linhaList[position].cor),
           semanticContainer: true,
-          child: ListTile(
-            title: Text(this._linhaList[position].codigo,
-                style: (this._linhaList[position].cor < -16000000)
-                    ? TextStyle(color: Colors.white)
-                    : TextStyle(color: Colors.black)),
-            subtitle: Text(
-                this._linhaList[position].nome +
-                    "          Estoque: " +
-                    this._linhaList[position].estoque_1.toString(),
-                style: (this._linhaList[position].cor < -16000000)
-                    ? TextStyle(color: Colors.white)
-                    : TextStyle(color: Colors.black)),
-            trailing: GestureDetector(
-              child: this._linhaList[position].nome.contains('ermelho')
-                  ? Icon(Icons.delete, color: Colors.white)
-                  : Icon(Icons.delete, color: Colors.red),
-              onTap: () {
-                _deleteLinha(context, _linhaList[position]);
-              },
-            ),
-            onTap: () {
-              _showDetailPage(this._linhaList[position], 'Alterar Linha');
-            },
+          child: Row(
+            children: [
+              circ
+              ListTile(
+                title: Text(this._linhaList[position].codigo,
+                    style: (this._linhaList[position].cor < -16000000)
+                        ? TextStyle(color: Colors.white)
+                        : TextStyle(color: Colors.black)),
+                subtitle: Text(
+                    this._linhaList[position].nome +
+                        "          Estoque: " +
+                        this._linhaList[position].estoque_1.toString(),
+                    style: (this._linhaList[position].cor < -16000000)
+                        ? TextStyle(color: Colors.white)
+                        : TextStyle(color: Colors.black)),
+                trailing: GestureDetector(
+                  child: this._linhaList[position].nome.contains('ermelho')
+                      ? Icon(Icons.delete, color: Colors.white)
+                      : Icon(Icons.delete, color: Colors.red),
+                  onTap: () {
+                    _deleteLinha(context, _linhaList[position]);
+                  },
+                ),
+                onTap: () {
+                  _showDetailPage(this._linhaList[position], 'Alterar Linha');
+                },
+              ),
+            ],
           ),
         );
       },
