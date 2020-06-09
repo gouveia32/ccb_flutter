@@ -81,19 +81,48 @@ class ListPageState extends State<LinhaListPage> {
     );
   }
 
+  final planetCard = new Container(
+    height: 124.0,
+    margin: new EdgeInsets.only(left: 46.0),
+    decoration: new BoxDecoration(
+      color: new Color(0xFF333366),
+      shape: BoxShape.rectangle,
+      borderRadius: new BorderRadius.circular(8.0),
+      boxShadow: <BoxShadow>[
+        new BoxShadow(
+          color: Colors.black12,
+          blurRadius: 10.0,
+          offset: new Offset(0.0, 10.0),
+        ),
+      ],
+    ),
+  );
+
+  final planetThumbnail = new Container(
+    margin: new EdgeInsets.symmetric(vertical: 16.0),
+    alignment: FractionalOffset.centerLeft,
+    child: new Image(
+      image: new AssetImage("assets/img/mars.png"),
+      height: 92.0,
+      width: 92.0,
+    ),
+  );
+
   ListView _getLinhasListView() {
     return ListView.builder(
       itemCount: _numberOfLinhas,
       itemBuilder: (BuildContext context, int position) {
-        return Card(
-          elevation: 3.0,
-          borderOnForeground: true,
-          color: Color(this._linhaList[position].cor),
-          semanticContainer: true,
-          child: Row(
-            children: [
-              circ
-              ListTile(
+        return new Stack(
+          children: <Widget>[
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              elevation: 3.0,
+              borderOnForeground: true,
+              color: Color(this._linhaList[position].cor),
+              semanticContainer: true,
+              child: ListTile(
                 title: Text(this._linhaList[position].codigo,
                     style: (this._linhaList[position].cor < -16000000)
                         ? TextStyle(color: Colors.white)
@@ -117,8 +146,16 @@ class ListPageState extends State<LinhaListPage> {
                   _showDetailPage(this._linhaList[position], 'Alterar Linha');
                 },
               ),
-            ],
-          ),
+            ),
+            Container(
+              height: 50.0,
+              margin: new EdgeInsets.only(right: 5.0),
+              decoration: new BoxDecoration(
+                color: new Color(0xFF333366),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
         );
       },
     );
