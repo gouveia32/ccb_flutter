@@ -18,7 +18,7 @@ class ListPageState extends State<LinhaListPage> {
   List<Linha> _linhaList;
   int _numberOfLinhas = 0;
 
-  var _filter = null;
+  var _filter = "";
   TextEditingController _textController = TextEditingController();
 
   onItemChanged(String value) {
@@ -123,21 +123,18 @@ class ListPageState extends State<LinhaListPage> {
               color: Colors.white24,
               semanticContainer: true,
               child: ListTile(
-                title: Text(this._linhaList[position].codigo,
-                    style: (this._linhaList[position].cor < -16000000)
-                        ? TextStyle(color: Colors.white)
-                        : TextStyle(color: Colors.black)),
-                subtitle: Text(
+                title: Center(
+                  child: Text(this._linhaList[position].codigo),
+                ),
+                subtitle: Center(
+                  child: Text(
                     this._linhaList[position].nome +
                         "          Estoque: " +
                         this._linhaList[position].estoque_1.toString(),
-                    style: (this._linhaList[position].cor < -16000000)
-                        ? TextStyle(color: Colors.white)
-                        : TextStyle(color: Colors.black)),
+                  ),
+                ),
                 trailing: GestureDetector(
-                  child: this._linhaList[position].nome.contains('ermelho')
-                      ? Icon(Icons.delete, color: Colors.white)
-                      : Icon(Icons.delete, color: Colors.red),
+                  child: Icon(Icons.delete, color: Colors.red),
                   onTap: () {
                     _deleteLinha(context, _linhaList[position]);
                   },
@@ -148,17 +145,24 @@ class ListPageState extends State<LinhaListPage> {
               ),
             ),
             Container(
-              height: 50.0,
-              //margin: new EdgeInsets.only(right: 350.0),
-              margin: new EdgeInsets.symmetric(horizontal: 1.0, vertical: 10.0),
-              decoration: new BoxDecoration(
-                color: Color(this._linhaList[position].cor),
-                shape: BoxShape.circle,
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: Border.all(
+                      color: Colors.red,
+                      width: 8.0,
+                    ) +
+                    Border.all(
+                      color: Colors.green,
+                      width: 8.0,
+                    ) +
+                    Border.all(
+                      color: Colors.blue,
+                      width: 8.0,
+                    ),
               ),
-            ),
-            Center(
-              child: Text(this._linhaList[position].codigo),
-            ),
+              child: Text(this._linhaList[position].codigo,
+                  textAlign: TextAlign.center),
+            )
           ],
         );
       },
