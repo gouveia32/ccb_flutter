@@ -120,7 +120,7 @@ class ListPageState extends State<LinhaListPage> {
               ),
               elevation: 3.0,
               borderOnForeground: true,
-              color: Color(this._linhaList[position].cor),
+              color: Colors.white24,
               semanticContainer: true,
               child: ListTile(
                 title: Text(this._linhaList[position].codigo,
@@ -149,11 +149,15 @@ class ListPageState extends State<LinhaListPage> {
             ),
             Container(
               height: 50.0,
-              margin: new EdgeInsets.only(right: 5.0),
+              //margin: new EdgeInsets.only(right: 350.0),
+              margin: new EdgeInsets.symmetric(horizontal: 1.0, vertical: 10.0),
               decoration: new BoxDecoration(
-                color: new Color(0xFF333366),
+                color: Color(this._linhaList[position].cor),
                 shape: BoxShape.circle,
               ),
+            ),
+            Center(
+              child: Text(this._linhaList[position].codigo),
             ),
           ],
         );
