@@ -97,18 +97,23 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<Linha>> getLinhasList([String filter = null]) async {
+  Future<List<Linha>> getLinhasList(
+      [String filter, int offset = 0, int limit = 10]) async {
     MySqlConnection connection = await this.databaseConnection;
 
     List<Linha> listResults = List();
     var sql = "SELECT codigo, nome,material_nome,material_fabricante," +
         "material_tipo,cor,estoque_1,estoque_2,minimo,pedido " +
         "FROM Linhas";
-    if (filter == null) {
-      sql += " ORDER BY nome";
+    if (filter == "") {
+      sql +=
+          " ORDER BY nome LIMIT " + offset.toString() + "," + limit.toString();
     } else {
       sql +=
-          " WHERE codigo = '${filter}' OR nome like '%${filter}%' ORDER BY nome";
+          " WHERE codigo = '${filter}' OR nome like '%${filter}%' ORDER BY nome LIMIT " +
+              offset.toString() +
+              "," +
+              limit.toString();
     }
 
     if (connection != null) {

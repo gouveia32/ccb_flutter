@@ -17,6 +17,8 @@ class ListPageState extends State<LinhaListPage> {
 
   List<Linha> _linhaList;
   int _numberOfLinhas = 0;
+  int _skip = 0;
+  int _take = 5;
 
   var _filter = "";
   TextEditingController _textController = TextEditingController();
@@ -37,7 +39,7 @@ class ListPageState extends State<LinhaListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Linhas'),
+        title: Text("Linhas: '${_numberOfLinhas}'"),
       ),
       body: Column(children: <Widget>[
         Padding(
@@ -81,37 +83,19 @@ class ListPageState extends State<LinhaListPage> {
     );
   }
 
-  final planetCard = new Container(
-    height: 124.0,
-    margin: new EdgeInsets.only(left: 46.0),
-    decoration: new BoxDecoration(
-      color: new Color(0xFF333366),
-      shape: BoxShape.rectangle,
-      borderRadius: new BorderRadius.circular(8.0),
-      boxShadow: <BoxShadow>[
-        new BoxShadow(
-          color: Colors.black12,
-          blurRadius: 10.0,
-          offset: new Offset(0.0, 10.0),
-        ),
-      ],
-    ),
-  );
-
-  final planetThumbnail = new Container(
-    margin: new EdgeInsets.symmetric(vertical: 16.0),
-    alignment: FractionalOffset.centerLeft,
-    child: new Image(
-      image: new AssetImage("assets/img/mars.png"),
-      height: 92.0,
-      width: 92.0,
-    ),
-  );
-
   ListView _getLinhasListView() {
     return ListView.builder(
       itemCount: _numberOfLinhas,
       itemBuilder: (BuildContext context, int position) {
+        var values = _linhaList;
+
+        if (position >= _linhaList.length - 1) {
+          _skip++;
+          _updateListView();
+        }
+        final cor = Color(values[position].cor);
+        final luminancia =
+            (0.299 * cor.red + 0.587 * cor.green + 0.114 * cor.blue) / 255;
         return new Stack(
           children: <Widget>[
             Card(
@@ -124,13 +108,11 @@ class ListPageState extends State<LinhaListPage> {
               semanticContainer: true,
               child: ListTile(
                 title: Center(
-                  child: Text(this._linhaList[position].codigo),
+                  child: Text(values[position].nome),
                 ),
                 subtitle: Center(
                   child: Text(
-                    this._linhaList[position].nome +
-                        "          Estoque: " +
-                        this._linhaList[position].estoque_1.toString(),
+                    "Estoque: " + values[position].estoque_1.toString(),
                   ),
                 ),
                 trailing: GestureDetector(
@@ -140,28 +122,47 @@ class ListPageState extends State<LinhaListPage> {
                   },
                 ),
                 onTap: () {
-                  _showDetailPage(this._linhaList[position], 'Alterar Linha');
+                  _showDetailPage(values[position], 'Alterar Linha');
                 },
               ),
             ),
             Container(
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: Border.all(
-                      color: Colors.red,
-                      width: 8.0,
-                    ) +
-                    Border.all(
-                      color: Colors.green,
-                      width: 8.0,
-                    ) +
-                    Border.all(
-                      color: Colors.blue,
-                      width: 8.0,
-                    ),
+              width: 70,
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.black, // border color
+                shape: BoxShape.circle,
               ),
-              child: Text(this._linhaList[position].codigo,
-                  textAlign: TextAlign.center),
+              child: Padding(
+                padding: EdgeInsets.all(2), // border width
+                child: InkWell(
+                  onTap: () {
+                    _showDetailPage(values[position], 'Alterar Linha');
+                  },
+                  child: Container(
+                    // or ClipRRect if you need to clip the content
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(values[position].cor), // inner circle color
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        child: Text(
+                          values[position].codigo,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: luminancia > 0.5
+                                  ? Colors.black
+                                  : Colors.white),
+                        ),
+                      ),
+                    ), // inner content
+                  ),
+                ),
+              ),
             )
           ],
         );
@@ -172,7 +173,7 @@ class ListPageState extends State<LinhaListPage> {
   void _deleteLinha(BuildContext context, Linha linha) async {
     Future<void> linhaDeleteFuture = _model.deleteLinha(linha);
     linhaDeleteFuture.then((foo) {
-      _showSnackBar(context, "Linha was deleted.");
+      _showSnackBar(context, "Linha foi apagada.");
       _updateListView();
     }).catchError((e) {
       print(e.toString());
@@ -197,7 +198,8 @@ class ListPageState extends State<LinhaListPage> {
   }
 
   void _updateListView() {
-    Future<List<Linha>> linhaListFuture = _model.getLinhasList(_filter);
+    Future<List<Linha>> linhaListFuture =
+        _model.getLinhasList(_filter, _skip, _take);
     linhaListFuture.then((linhaList) {
       setState(() {
         this._linhaList = linhaList;

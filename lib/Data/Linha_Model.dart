@@ -23,8 +23,9 @@ class Model {
     return _databaseHelper.deleteLinha(linha);
   }
 
-  Future<List<Linha>> getLinhasList([String filter = null]) async {
-    return _databaseHelper.getLinhasList(filter);
+  Future<List<Linha>> getLinhasList(
+      [String filter, int offset = 0, int limit = 10]) async {
+    return _databaseHelper.getLinhasList(filter, offset, limit);
   }
 }
 
