@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Data/Contact_Model.dart';
 import 'contactDetailScreen.dart';
@@ -12,6 +13,44 @@ class ContactListPage extends StatefulWidget {
 }
 
 class ListPageState extends State<ContactListPage> {
+  List myList;
+  ScrollController _scrollController = ScrollController();
+  int _currentMax = 10;
+
+  @override
+  void initState() {
+    super.initState();
+    myList = List.generate(10, (i) => "Item : ${i + 1}");
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _getMoreData();
+      }
+    });
+  }
+
+  _getMoreData() {
+    for (int i = _currentMax; i < _currentMax + 10; i++) {
+      myList.add("Item : ${i + 1}");
+    }
+
+    Future<List<Contact>> contactListFuture =
+        _model.getContactsList(_currentMax, _currentMax + 10);
+    contactListFuture.then((contactList) {
+      setState(() {
+        this._contactList = contactList;
+        this._numberOfContacts = contactList.length;
+        carregado = true;
+      });
+    }).catchError((e) async {
+      print(e.toString());
+      //showAlertDialog(context, "Database error", e.toString()); // this is for me, so showing actual exception. suggest something more user-friendly in a real app.
+    });
+    _currentMax = _currentMax + 10;
+
+    setState(() {});
+  }
+
   Model _model = Model();
   bool carregado = false;
 
@@ -58,39 +97,17 @@ class ListPageState extends State<ContactListPage> {
 
   ListView _getContactsListView() {
     return ListView.builder(
-      itemCount: _numberOfContacts,
-      itemBuilder: (BuildContext context, int position) {
-        return Card(
-          elevation: 3.0,
-          borderOnForeground: true,
-          color: Colors.green[100],
-          semanticContainer: true,
-          child: ListTile(
-            title: Text(
-              this._contactList[position].name,
-            ),
-            subtitle: Text(this._contactList[position].mobilePhone),
-            trailing: GestureDetector(
-              child: Icon(
-                Icons.delete,
-                color: Colors.grey,
-              ),
-              onTap: () {
-                _deleteContact(context, _contactList[position]);
-              },
-            ),
-            onTap: () {
-              //_showDetailPage(this._contactList[position], 'Edit Contact');
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ContactDetail(
-                        this._contactList[position], 'Alterar Contato')),
-              );
-            },
-          ),
+      controller: _scrollController,
+      itemExtent: 80,
+      itemBuilder: (context, i) {
+        if (i == myList.length) {
+          return CupertinoActivityIndicator();
+        }
+        return ListTile(
+          title: Text(myList[i]),
         );
       },
+      itemCount: myList.length + 1,
     );
   }
 
