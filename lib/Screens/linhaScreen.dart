@@ -18,7 +18,7 @@ class ListPageState extends State<LinhaListPage> {
   List<Linha> _linhaList;
   int _numberOfLinhas = 0;
   int _skip = 0;
-  int _take = 5;
+  int _take = 10;
 
   var _filter = "";
   TextEditingController _textController = TextEditingController();
@@ -90,7 +90,7 @@ class ListPageState extends State<LinhaListPage> {
         var values = _linhaList;
 
         if (position >= _linhaList.length - 1) {
-          _skip++;
+          _skip += _take + 1;
           _updateListView();
         }
         final cor = Color(values[position].cor);
@@ -202,7 +202,7 @@ class ListPageState extends State<LinhaListPage> {
         _model.getLinhasList(_filter, _skip, _take);
     linhaListFuture.then((linhaList) {
       setState(() {
-        this._linhaList = linhaList;
+        this._linhaList += linhaList;
         this._numberOfLinhas = linhaList.length;
         carregado = true;
       });
