@@ -23,8 +23,13 @@ class Model {
     return _databaseHelper.deleteCliente(cliente);
   }
 
-  Future<List<Cliente>> getClientesList([String filter = ""]) async {
-    return _databaseHelper.getClientesList(filter);
+  Future<List<Cliente>> getClientesList(
+      [String filter, int offset = 0, int limit = 10]) async {
+    return _databaseHelper.getClientesList(filter, offset, limit);
+  }
+
+  Future<int> getTotItens([String filter]) async {
+    return _databaseHelper.getTotItens(filter);
   }
 }
 

@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../Data/Linha_Model.dart';
 import 'linhaDetailScreen.dart';
+import 'package:flutter/cupertino.dart';
+
+const _MAX_LINES = 12;
 
 class LinhaListPage extends StatefulWidget {
   static const routeName = '/linha-list';
@@ -12,21 +15,35 @@ class LinhaListPage extends StatefulWidget {
 }
 
 class ListPageState extends State<LinhaListPage> {
+  ScrollController _scrollController = ScrollController();
+  int _offset = 0;
+  int _currentMax = _MAX_LINES;
+
   Model _model = Model();
   bool carregado = false;
 
   List<Linha> _linhaList;
-  int _numberOfLinhas = 0;
-  int _skip = 0;
-  int _take = 10;
-
   var _filter = "";
+
   TextEditingController _textController = TextEditingController();
 
   onItemChanged(String value) {
     setState(() {
       _filter = _textController.text;
-      _updateListView();
+      _linhaList = null;
+      _offset = 0;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _getMoreData();
+      }
     });
   }
 
@@ -34,12 +51,12 @@ class ListPageState extends State<LinhaListPage> {
   Widget build(BuildContext context) {
     if (_linhaList == null) {
       _linhaList = List<Linha>();
-      _updateListView();
+      _getMoreData();
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Linhas: '${_numberOfLinhas}'"),
+        title: Text("Linhas (${_linhaList.length})"),
       ),
       body: Column(children: <Widget>[
         Padding(
@@ -47,7 +64,7 @@ class ListPageState extends State<LinhaListPage> {
           child: TextField(
             controller: _textController,
             decoration: InputDecoration(
-              hintText: 'Filtre por código ou nome da linha...',
+              hintText: 'digite para filtrar por código ou nome...',
             ),
             onChanged: onItemChanged,
           ),
@@ -85,15 +102,15 @@ class ListPageState extends State<LinhaListPage> {
 
   ListView _getLinhasListView() {
     return ListView.builder(
-      itemCount: _numberOfLinhas,
-      itemBuilder: (BuildContext context, int position) {
-        var values = _linhaList;
-
-        if (position >= _linhaList.length - 1) {
-          _skip += _take + 1;
-          _updateListView();
+      controller: _scrollController,
+      itemExtent: 70,
+      itemCount: this._linhaList.length,
+      itemBuilder: (context, position) {
+        if (position == _linhaList.length) {
+          return CupertinoActivityIndicator();
         }
-        final cor = Color(values[position].cor);
+        final cor = Color(_linhaList[position].cor);
+        //luminancia para determinar a cor do texto do codigo
         final luminancia =
             (0.299 * cor.red + 0.587 * cor.green + 0.114 * cor.blue) / 255;
         return new Stack(
@@ -102,18 +119,18 @@ class ListPageState extends State<LinhaListPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
-              elevation: 3.0,
+              elevation: 2.0,
               borderOnForeground: true,
               color: Colors.white24,
-              semanticContainer: true,
+              semanticContainer: false,
               child: ListTile(
-                title: Center(
-                  child: Text(values[position].nome),
+                contentPadding: EdgeInsets.only(left: 70),
+                title: Text(
+                  _linhaList[position].nome,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                subtitle: Center(
-                  child: Text(
-                    "Estoque: " + values[position].estoque_1.toString(),
-                  ),
+                subtitle: Text(
+                  "Estoque: ${_linhaList[position].estoque_1.toString()}",
                 ),
                 trailing: GestureDetector(
                   child: Icon(Icons.delete, color: Colors.red),
@@ -122,7 +139,7 @@ class ListPageState extends State<LinhaListPage> {
                   },
                 ),
                 onTap: () {
-                  _showDetailPage(values[position], 'Alterar Linha');
+                  _showDetailPage(_linhaList[position], 'Alterar Linha');
                 },
               ),
             ),
@@ -134,22 +151,23 @@ class ListPageState extends State<LinhaListPage> {
                 shape: BoxShape.circle,
               ),
               child: Padding(
-                padding: EdgeInsets.all(2), // border width
+                padding: EdgeInsets.all(1), // border width
                 child: InkWell(
                   onTap: () {
-                    _showDetailPage(values[position], 'Alterar Linha');
+                    _showDetailPage(_linhaList[position], 'Alterar Linha');
                   },
                   child: Container(
                     // or ClipRRect if you need to clip the content
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Color(values[position].cor), // inner circle color
+                      color:
+                          Color(_linhaList[position].cor), // inner circle color
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Container(
                         child: Text(
-                          values[position].codigo,
+                          _linhaList[position].codigo,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 18,
@@ -174,7 +192,7 @@ class ListPageState extends State<LinhaListPage> {
     Future<void> linhaDeleteFuture = _model.deleteLinha(linha);
     linhaDeleteFuture.then((foo) {
       _showSnackBar(context, "Linha foi apagada.");
-      _updateListView();
+      _getMoreData();
     }).catchError((e) {
       print(e.toString());
       _showSnackBar(context, "Error trying to delete linha");
@@ -193,23 +211,28 @@ class ListPageState extends State<LinhaListPage> {
     }));
 
     if (result == true) {
-      _updateListView();
+      _getMoreData();
     }
   }
 
-  void _updateListView() {
+  _getMoreData() {
+    carregado = false;
+
     Future<List<Linha>> linhaListFuture =
-        _model.getLinhasList(_filter, _skip, _take);
+        _model.getLinhasList(_filter, _offset, _currentMax);
     linhaListFuture.then((linhaList) {
       setState(() {
-        this._linhaList += linhaList;
-        this._numberOfLinhas = linhaList.length;
+        this._linhaList = [..._linhaList, ...linhaList];
         carregado = true;
+        _offset = _currentMax;
+        _currentMax += _MAX_LINES;
       });
     }).catchError((e) async {
       print(e.toString());
       showAlertDialog(context, "Database error",
           e.toString()); // this is for me, so showing actual exception. suggest something more user-friendly in a real app.
     });
+
+    //setState(() {});
   }
 }

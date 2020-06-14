@@ -84,14 +84,26 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<Contact>> getContactsList() async {
+  Future<List<Contact>> getContactsList(
+      [String filter, int offset = 0, int limit = 10]) async {
     MySqlConnection connection = await this.databaseConnection;
 
     List<Contact> listResults = List();
+    var sql =
+        "SELECT Id, Name, Address, Phone, Phone_mobile, Email, Notes FROM Contacts ";
+
+    if (filter == null) {
+      sql += " ORDER BY Id LIMIT " + offset.toString() + "," + limit.toString();
+    } else {
+      sql +=
+          " WHERE Name LIKE '%${filter}%' OR Email LIKE '%${filter}%' ORDER BY Id  LIMIT " +
+              offset.toString() +
+              "," +
+              limit.toString();
+    }
 
     if (connection != null) {
-      Results results = await connection.query(
-          'select Id, Name, Address, Phone, Phone_mobile, Email, Notes from Contacts order by Name');
+      Results results = await connection.query(sql);
 
       connection.close();
 

@@ -1,33 +1,52 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Data/Cliente_Model.dart';
 
 import 'clienteDetailScreen.dart';
 
-class ClienteListPage extends StatefulWidget {
-  @override
-  static const routeName = '/cliente-list';
+const _MAX_LINES = 12;
 
+class ClienteListPage extends StatefulWidget {
+  static const routeName = '/cliente-list';
+  @override
   State<StatefulWidget> createState() {
-    return ClienteListPageState();
+    return ListPageState();
   }
 }
 
-class ClienteListPageState extends State<ClienteListPage> {
-  static const routeName = '/cliente-screen';
+class ListPageState extends State<ClienteListPage> {
+  ScrollController _scrollController = ScrollController();
+  int _offset = 0;
+  int _currentMax = _MAX_LINES;
+
   Model _model = Model();
   bool carregado = false;
 
   List<Cliente> _clienteList;
-  int _numberOfClientes = 0;
+  var _filter = "";
 
-  var _filter = null;
+  var totItens = 0;
+
   TextEditingController _textController = TextEditingController();
 
   onItemChanged(String value) {
     setState(() {
       _filter = _textController.text;
-      _updateListView();
+      _clienteList = null;
+      _offset = 0;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _getMoreData();
+      }
     });
   }
 
@@ -35,11 +54,12 @@ class ClienteListPageState extends State<ClienteListPage> {
   Widget build(BuildContext context) {
     if (_clienteList == null) {
       _clienteList = List<Cliente>();
-      _updateListView();
+      _getMoreData();
     }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Clientes'),
+        title: Text("Clientes (${totItens})"),
       ),
       body: Column(children: <Widget>[
         Padding(
@@ -47,7 +67,7 @@ class ClienteListPageState extends State<ClienteListPage> {
           child: TextField(
             controller: _textController,
             decoration: InputDecoration(
-              hintText: 'Filtre por nome ou contato da linha...',
+              hintText: 'digite para filtrar por nome ou contato...',
             ),
             onChanged: onItemChanged,
           ),
@@ -63,6 +83,8 @@ class ClienteListPageState extends State<ClienteListPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue[300],
         onPressed: () {
+          //_showDetailPage(Linha('', '', '', '', '', ''), 'Adicionar Contato');
+
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -72,7 +94,7 @@ class ClienteListPageState extends State<ClienteListPage> {
                     'Novo Cliente')),
           );
         },
-        tooltip: 'Adicionar Cliente',
+        tooltip: 'Adicionar Linha',
         child: Icon(
           Icons.add,
           color: Colors.white,
@@ -85,9 +107,22 @@ class ClienteListPageState extends State<ClienteListPage> {
 
   ListView _getClientesListView() {
     return ListView.builder(
-      itemCount: _numberOfClientes,
-      itemBuilder: (BuildContext context, int position) {
-        //var values = _clientList;
+      controller: _scrollController,
+      itemExtent: 80,
+      itemBuilder: (context, position) {
+        if (position == _clienteList.length) {
+          return CupertinoActivityIndicator();
+        }
+
+        var st = '';
+
+        if (this._clienteList[position].telefone1 != '') {
+          st += 'Tel.: ${this._clienteList[position].telefone1}  ';
+        }
+
+        if (this._clienteList[position].email != '') {
+          st += 'Email.: ${this._clienteList[position].email}';
+        }
 
         return Card(
           elevation: 3.0,
@@ -95,10 +130,12 @@ class ClienteListPageState extends State<ClienteListPage> {
           color: Colors.blue[100],
           semanticContainer: true,
           child: ListTile(
+            contentPadding: EdgeInsets.only(left: 8),
             title: Text(
               this._clienteList[position].nome,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            subtitle: Text(this._clienteList[position].telefone1),
+            subtitle: Text(st),
             trailing: GestureDetector(
               child: Icon(
                 Icons.delete,
@@ -114,6 +151,7 @@ class ClienteListPageState extends State<ClienteListPage> {
           ),
         );
       },
+      itemCount: this._clienteList.length,
     );
   }
 
@@ -121,7 +159,7 @@ class ClienteListPageState extends State<ClienteListPage> {
     Future<void> clienteDeleteFuture = _model.deleteCliente(cliente);
     clienteDeleteFuture.then((foo) {
       _showSnackBar(context, "O Cliente foi apagado.");
-      _updateListView();
+      _getMoreData();
     }).catchError((e) {
       print(e.toString());
       _showSnackBar(context, "Erro ao tentar apagar o cliente!");
@@ -140,21 +178,28 @@ class ClienteListPageState extends State<ClienteListPage> {
     }));
 
     if (result == true) {
-      _updateListView();
+      _getMoreData();
     }
   }
 
-  void _updateListView() {
-    Future<List<Cliente>> clienteListFuture = _model.getClientesList(_filter);
+  _getMoreData() {
+    carregado = false;
+
+    Future<List<Cliente>> clienteListFuture =
+        _model.getClientesList(_filter, _offset, _currentMax);
     clienteListFuture.then((clienteList) {
       setState(() {
-        this._clienteList = clienteList;
-        this._numberOfClientes = clienteList.length;
+        this._clienteList = [..._clienteList, ...clienteList];
         carregado = true;
+        _offset = _currentMax;
+        _currentMax += _MAX_LINES;
+        _model.getTotItens(_filter).then((value) {
+          totItens = value;
+        });
       });
-    }).catchError((e) {
+    }).catchError((e) async {
       print(e.toString());
-      showAlertDialog(context, "Erro na Base de dados",
+      showAlertDialog(context, "Database error",
           e.toString()); // this is for me, so showing actual exception. suggest something more user-friendly in a real app.
     });
   }

@@ -106,7 +106,8 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<Cliente>> getClientesList([String filter = ""]) async {
+  Future<List<Cliente>> getClientesList(
+      [String filter, int offset = 0, int limit = 10]) async {
     MySqlConnection connection = await this.databaseConnection;
 
     List<Cliente> listResults = List();
@@ -115,10 +116,14 @@ class DatabaseHelper {
         "telefone3,email,obs,preco_base FROM clientes ";
 
     if (filter == null) {
-      sql += " ORDER BY nome";
+      sql +=
+          " ORDER BY nome LIMIT " + offset.toString() + "," + limit.toString();
     } else {
       sql +=
-          " WHERE contato_nome like '%${filter}%' OR nome like '%${filter}%' ORDER BY nome";
+          " WHERE contato_nome like '%${filter}%' OR nome like '%${filter}%' ORDER BY nome LIMIT " +
+              offset.toString() +
+              "," +
+              limit.toString();
     }
 
     if (connection != null) {
@@ -147,5 +152,28 @@ class DatabaseHelper {
       }
     }
     return listResults;
+  }
+
+  Future<int> getTotItens([String filter]) async {
+    MySqlConnection connection = await this.databaseConnection;
+
+    int Result = 0;
+    var sql = "SELECT COUNT(*) AS totItens " + "FROM Clientes ";
+    if (filter == "") {
+      sql += ";";
+    } else {
+      sql +=
+          " WHERE codigo = '${filter}' OR nome like '%${filter}%' ORDER BY nome;";
+    }
+
+    if (connection != null) {
+      Results results = await connection.query(sql);
+      connection.close();
+
+      for (var row in results) {
+        Result = row[0];
+      }
+    }
+    return Result;
   }
 }

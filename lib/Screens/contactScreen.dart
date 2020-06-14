@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../Data/Contact_Model.dart';
 import 'contactDetailScreen.dart';
 
+const _MAX_LINES = 12;
+
 class ContactListPage extends StatefulWidget {
   static const routeName = '/contact-list';
   @override
@@ -13,14 +15,15 @@ class ContactListPage extends StatefulWidget {
 }
 
 class ListPageState extends State<ContactListPage> {
-  List myList;
   ScrollController _scrollController = ScrollController();
-  int _currentMax = 10;
+  int _offset = 0;
+  int _currentMax = _MAX_LINES;
+  var _filter = "";
 
   @override
   void initState() {
     super.initState();
-    myList = List.generate(10, (i) => "Item : ${i + 1}");
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -29,55 +32,56 @@ class ListPageState extends State<ContactListPage> {
     });
   }
 
-  _getMoreData() {
-    for (int i = _currentMax; i < _currentMax + 10; i++) {
-      myList.add("Item : ${i + 1}");
-    }
-
-    Future<List<Contact>> contactListFuture =
-        _model.getContactsList(_currentMax, _currentMax + 10);
-    contactListFuture.then((contactList) {
-      setState(() {
-        this._contactList = contactList;
-        this._numberOfContacts = contactList.length;
-        carregado = true;
-      });
-    }).catchError((e) async {
-      print(e.toString());
-      //showAlertDialog(context, "Database error", e.toString()); // this is for me, so showing actual exception. suggest something more user-friendly in a real app.
-    });
-    _currentMax = _currentMax + 10;
-
-    setState(() {});
-  }
-
   Model _model = Model();
   bool carregado = false;
 
   List<Contact> _contactList;
-  int _numberOfContacts = 0;
+
+  TextEditingController _textController = TextEditingController();
+
+  onItemChanged(String value) {
+    setState(() {
+      _filter = _textController.text;
+      _contactList = null;
+      _offset = 0;
+      //_getMoreData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     if (_contactList == null) {
       _contactList = List<Contact>();
-      _updateListView();
+      _getMoreData();
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Contatos'),
+        title: Text(
+            "Contatos                               (${_contactList.length})"),
       ),
-      body: carregado
-          ? SafeArea(
-              child: _getContactsListView(),
-            )
-          : Center(child: new CircularProgressIndicator()),
+      body: Column(children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: _textController,
+            decoration: InputDecoration(
+              hintText: 'digite para filtrar por nome ou email...',
+            ),
+            onChanged: onItemChanged,
+          ),
+        ),
+        Expanded(
+          child: carregado
+              ? SafeArea(
+                  child: _getContactsListView(),
+                )
+              : Center(child: new CircularProgressIndicator()),
+        ),
+      ]),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue[300],
         onPressed: () {
-          //_showDetailPage(Contact('', '', '', '', '', ''), 'Adicionar Contato');
-
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -85,13 +89,14 @@ class ListPageState extends State<ContactListPage> {
                     Contact(0, '', '', '', '', '', ''), 'Novo Contato')),
           );
         },
-        tooltip: 'Adicionar Cliente',
+        tooltip: 'Adicionar Linha',
         child: Icon(
           Icons.add,
           color: Colors.white,
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterFloat,
     );
   }
 
@@ -99,15 +104,38 @@ class ListPageState extends State<ContactListPage> {
     return ListView.builder(
       controller: _scrollController,
       itemExtent: 80,
-      itemBuilder: (context, i) {
-        if (i == myList.length) {
+      itemCount: this._contactList.length,
+      itemBuilder: (context, position) {
+        if (position == _contactList.length) {
           return CupertinoActivityIndicator();
         }
-        return ListTile(
-          title: Text(myList[i]),
+        return Card(
+          elevation: 3.0,
+          borderOnForeground: true,
+          color: Colors.blue[100],
+          semanticContainer: true,
+          child: ListTile(
+            title: Text(
+              this._contactList[position].name,
+            ),
+            subtitle: Text(this._contactList[position].mobilePhone +
+                "   eMail: " +
+                this._contactList[position].email),
+            trailing: GestureDetector(
+              child: Icon(
+                Icons.delete,
+                color: Colors.redAccent,
+              ),
+              onTap: () {
+                _deleteContact(context, _contactList[position]);
+              },
+            ),
+            onTap: () {
+              _showDetailPage(this._contactList[position], 'Alterar o Contato');
+            },
+          ),
         );
       },
-      itemCount: myList.length + 1,
     );
   }
 
@@ -115,7 +143,7 @@ class ListPageState extends State<ContactListPage> {
     Future<void> contactDeleteFuture = _model.deleteContact(contact);
     contactDeleteFuture.then((foo) {
       _showSnackBar(context, "Contact was deleted.");
-      _updateListView();
+      _getMoreData();
     }).catchError((e) {
       print(e.toString());
       _showSnackBar(context, "Error trying to delete contact");
@@ -134,21 +162,28 @@ class ListPageState extends State<ContactListPage> {
     }));
 
     if (result == true) {
-      _updateListView();
+      _getMoreData();
     }
   }
 
-  void _updateListView() {
-    Future<List<Contact>> contactListFuture = _model.getContactsList();
+  _getMoreData() {
+    carregado = false;
+
+    Future<List<Contact>> contactListFuture =
+        _model.getContactsList(_filter, _offset, _currentMax);
     contactListFuture.then((contactList) {
       setState(() {
-        this._contactList = contactList;
-        this._numberOfContacts = contactList.length;
+        this._contactList = [..._contactList, ...contactList];
         carregado = true;
+        _offset = _currentMax;
+        _currentMax += _MAX_LINES;
+        if (_offset > _contactList.length) _offset = _contactList.length;
       });
     }).catchError((e) async {
       print(e.toString());
       //showAlertDialog(context, "Database error", e.toString()); // this is for me, so showing actual exception. suggest something more user-friendly in a real app.
     });
+
+    //setState(() {});
   }
 }

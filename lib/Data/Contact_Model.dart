@@ -23,8 +23,9 @@ class Model {
     return _databaseHelper.deleteContact(contact);
   }
 
-  Future<List<Contact>> getContactsList() async {
-    return _databaseHelper.getContactsList();
+  Future<List<Contact>> getContactsList(
+      [String filter, int offset = 0, int limit = 10]) async {
+    return _databaseHelper.getContactsList(filter, offset, limit);
   }
 }
 
