@@ -4,7 +4,11 @@ import '../Data/Linha_Model.dart';
 import 'linhaDetailScreen.dart';
 import 'package:flutter/cupertino.dart';
 
-const _MAX_LINES = 12;
+const _MAX_LINES = 10;
+enum FilterOptions {
+  EstoqueNoMinimo,
+  Todas,
+}
 
 class LinhaListPage extends StatefulWidget {
   static const routeName = '/linha-list';
@@ -25,6 +29,7 @@ class ListPageState extends State<LinhaListPage> {
   List<Linha> _linhaList;
   var _filter = "";
   var totItens = 0;
+  var _mostraEstoqueBaixo = false;
 
   TextEditingController _textController = TextEditingController();
 
@@ -58,6 +63,34 @@ class ListPageState extends State<LinhaListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Linhas (${totItens})"),
+        actions: <Widget>[
+          PopupMenuButton(
+            onSelected: (FilterOptions selectedValue) {
+              setState(() {
+                if (selectedValue == FilterOptions.EstoqueNoMinimo) {
+                  _mostraEstoqueBaixo = true;
+                  // productsContainer.showFavoritesOnly();
+                } else {
+                  _mostraEstoqueBaixo = false;
+                  // productsContainer.showAll();
+                }
+                _offset = 0;
+                _getMoreData();
+              });
+            },
+            icon: Icon(Icons.more_vert),
+            itemBuilder: (_) => [
+              PopupMenuItem(
+                child: Text('Estoque Baixo'),
+                value: FilterOptions.EstoqueNoMinimo,
+              ),
+              PopupMenuItem(
+                child: Text('Mostrar Todas'),
+                value: FilterOptions.Todas,
+              ),
+            ],
+          ),
+        ],
       ),
       body: Column(children: <Widget>[
         Padding(
@@ -220,7 +253,8 @@ class ListPageState extends State<LinhaListPage> {
   }
 
   _getTotItens() {
-    Future<int> totItemFuture = _model.getTotItens(_filter);
+    Future<int> totItemFuture =
+        _model.getTotItens(_filter, _mostraEstoqueBaixo);
     totItemFuture.then((value) {
       setState(() {
         totItens = value;
@@ -231,8 +265,8 @@ class ListPageState extends State<LinhaListPage> {
   _getMoreData() {
     carregado = false;
 
-    Future<List<Linha>> linhaListFuture =
-        _model.getLinhasList(_filter, _offset, _currentMax);
+    Future<List<Linha>> linhaListFuture = _model.getLinhasList(
+        _filter, _mostraEstoqueBaixo, _offset, _currentMax);
     linhaListFuture.then((linhaList) {
       setState(() {
         this._linhaList = [..._linhaList, ...linhaList];

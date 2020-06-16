@@ -24,12 +24,12 @@ class Model {
   }
 
   Future<List<Linha>> getLinhasList(
-      [String filter, int offset = 0, int limit = 10]) async {
-    return _databaseHelper.getLinhasList(filter, offset, limit);
+      [String filter, bool estoqueMinimo = false, int offset = 0, int limit = 10]) async {
+    return _databaseHelper.getLinhasList(filter, estoqueMinimo, offset, limit);
   }
 
-  Future<int> getTotItens([String filter]) async {
-    return _databaseHelper.getTotItens(filter);
+  Future<int> getTotItens([String filter, bool mostraEstoqueMinimo = false]) async {
+    return _databaseHelper.getTotItens(filter, mostraEstoqueMinimo);
   }
 }
 

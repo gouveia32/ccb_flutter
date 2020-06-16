@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Text(
-          'ShopApp',
+          'ccb',
         ),
       ),
     );

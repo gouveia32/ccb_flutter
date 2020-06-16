@@ -98,23 +98,28 @@ class DatabaseHelper {
   }
 
   Future<List<Linha>> getLinhasList(
-      [String filter, int offset = 0, int limit = 10]) async {
+      [String filter,
+      bool mostraEstoqueBaixo,
+      int offset = 0,
+      int limit = 10]) async {
     MySqlConnection connection = await this.databaseConnection;
 
     List<Linha> listResults = List();
     var sql = "SELECT codigo, nome,material_nome,material_fabricante," +
         "material_tipo,cor,estoque_1,estoque_2,minimo,pedido " +
         "FROM Linhas";
-    if (filter == "") {
-      sql +=
-          " ORDER BY nome LIMIT " + offset.toString() + "," + limit.toString();
-    } else {
-      sql +=
-          " WHERE codigo = '${filter}' OR nome like '%${filter}%' ORDER BY nome LIMIT " +
-              offset.toString() +
-              "," +
-              limit.toString();
+
+    if (filter != "") {
+      sql += " WHERE (codigo = '${filter}' OR nome like '%${filter}%')";
+      if (mostraEstoqueBaixo) {
+        sql += " AND estoque_1 <= minimo AND minimo > 0";
+      } else {
+        if (mostraEstoqueBaixo) {
+          sql += " WHERE estoque_1 < minimo AND minimo > 0";
+        }
+      }
     }
+    sql += " ORDER BY nome LIMIT ${offset.toString()},${limit.toString()};";
 
     if (connection != null) {
       Results results = await connection.query(sql);
@@ -129,14 +134,22 @@ class DatabaseHelper {
     return listResults;
   }
 
-  Future<int> getTotItens([String filter]) async {
+  Future<int> getTotItens([
+    String filter,
+    bool mostraEstoqueBaixo = false,
+  ]) async {
     MySqlConnection connection = await this.databaseConnection;
 
     var sql = "SELECT COUNT(*) AS totItens " + "FROM Linhas ";
-    if (filter == "") {
-      sql += ";";
-    } else {
-      sql += " WHERE codigo = '${filter}' OR nome LIKE '%${filter}%';";
+    if (filter != "") {
+      sql += " WHERE (codigo = '${filter}' OR nome like '%${filter}%')";
+      if (mostraEstoqueBaixo) {
+        sql += " AND estoque_1 <= minimo AND minimo > 0";
+      } else {
+        if (mostraEstoqueBaixo) {
+          sql += " WHERE estoque_1 < minimo AND minimo > 0";
+        }
+      }
     }
 
     if (connection != null) {
