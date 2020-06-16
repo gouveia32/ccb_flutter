@@ -25,7 +25,7 @@ class ListPageState extends State<ClienteListPage> {
 
   List<Cliente> _clienteList;
   var _filter = "";
-  var totItens = 0;
+  var _totItens = 0;
 
   TextEditingController _textController = TextEditingController();
 
@@ -54,11 +54,12 @@ class ListPageState extends State<ClienteListPage> {
     if (_clienteList == null) {
       _clienteList = List<Cliente>();
       _getMoreData();
+      //_totItens = _clienteList.length;
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Clientes (${totItens})"),
+        title: Text("Clientes (${_totItens})"),
       ),
       body: Column(children: <Widget>[
         Padding(
@@ -85,8 +86,6 @@ class ListPageState extends State<ClienteListPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue[300],
         onPressed: () {
-          //_showDetailPage(Linha('', '', '', '', '', ''), 'Adicionar Contato');
-
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -188,13 +187,18 @@ class ListPageState extends State<ClienteListPage> {
     Future<int> totItemFuture = _model.getTotItens(_filter);
     totItemFuture.then((value) {
       setState(() {
-        totItens = value;
+        _totItens = value;
       });
     });
   }
 
   _getMoreData() {
     carregado = false;
+    setState(() {
+      _model.getTotItens(_filter).then((value) {
+        _totItens = value;
+      });
+    });
 
     Future<List<Cliente>> clienteListFuture =
         _model.getClientesList(_filter, _offset, _currentMax);
