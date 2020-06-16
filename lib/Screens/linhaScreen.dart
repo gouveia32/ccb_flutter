@@ -24,6 +24,7 @@ class ListPageState extends State<LinhaListPage> {
 
   List<Linha> _linhaList;
   var _filter = "";
+  var totItens = 0;
 
   TextEditingController _textController = TextEditingController();
 
@@ -56,7 +57,7 @@ class ListPageState extends State<LinhaListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Linhas (${_linhaList.length})"),
+        title: Text("Linhas (${totItens})"),
       ),
       body: Column(children: <Widget>[
         Padding(
@@ -66,7 +67,10 @@ class ListPageState extends State<LinhaListPage> {
             decoration: InputDecoration(
               hintText: 'digite para filtrar por código ou nome...',
             ),
-            onChanged: onItemChanged,
+            //onChanged: onItemChanged,
+            onEditingComplete: () {
+              onItemChanged(_textController.text);
+            },
           ),
         ),
         Expanded(
@@ -130,7 +134,7 @@ class ListPageState extends State<LinhaListPage> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                  "Estoque: ${_linhaList[position].estoque_1.toString()}",
+                  "Estoque: ${_linhaList[position].estoque_1.toString()}   Mínimo: ${_linhaList[position].minimo.toString()}",
                 ),
                 trailing: GestureDetector(
                   child: Icon(Icons.delete, color: Colors.red),
@@ -215,6 +219,15 @@ class ListPageState extends State<LinhaListPage> {
     }
   }
 
+  _getTotItens() {
+    Future<int> totItemFuture = _model.getTotItens(_filter);
+    totItemFuture.then((value) {
+      setState(() {
+        totItens = value;
+      });
+    });
+  }
+
   _getMoreData() {
     carregado = false;
 
@@ -226,6 +239,7 @@ class ListPageState extends State<LinhaListPage> {
         carregado = true;
         _offset = _currentMax;
         _currentMax += _MAX_LINES;
+        _getTotItens();
       });
     }).catchError((e) async {
       print(e.toString());

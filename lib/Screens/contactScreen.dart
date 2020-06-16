@@ -19,6 +19,7 @@ class ListPageState extends State<ContactListPage> {
   int _offset = 0;
   int _currentMax = _MAX_LINES;
   var _filter = "";
+  var totItens = 0;
 
   @override
   void initState() {
@@ -57,8 +58,7 @@ class ListPageState extends State<ContactListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            "Contatos                               (${_contactList.length})"),
+        title: Text("Contatos (${totItens})"),
       ),
       body: Column(children: <Widget>[
         Padding(
@@ -68,7 +68,10 @@ class ListPageState extends State<ContactListPage> {
             decoration: InputDecoration(
               hintText: 'digite para filtrar por nome ou email...',
             ),
-            onChanged: onItemChanged,
+            //onChanged: onItemChanged,
+            onEditingComplete: () {
+              onItemChanged(_textController.text);
+            },
           ),
         ),
         Expanded(
@@ -166,6 +169,15 @@ class ListPageState extends State<ContactListPage> {
     }
   }
 
+  _getTotItens() {
+    Future<int> totItemFuture = _model.getTotItens(_filter);
+    totItemFuture.then((value) {
+      setState(() {
+        totItens = value;
+      });
+    });
+  }
+
   _getMoreData() {
     carregado = false;
 
@@ -177,7 +189,7 @@ class ListPageState extends State<ContactListPage> {
         carregado = true;
         _offset = _currentMax;
         _currentMax += _MAX_LINES;
-        if (_offset > _contactList.length) _offset = _contactList.length;
+        _getTotItens();
       });
     }).catchError((e) async {
       print(e.toString());

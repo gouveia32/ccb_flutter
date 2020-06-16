@@ -114,4 +114,26 @@ class DatabaseHelper {
     }
     return listResults;
   }
+
+  Future<int> getTotItens([String filter]) async {
+    MySqlConnection connection = await this.databaseConnection;
+
+    var sql = "SELECT COUNT(*) AS totItens " + "FROM contacts ";
+
+    if (filter == "") {
+      sql += ";";
+    } else {
+      sql += " WHERE nome LIKE '%${filter}%' OR email LIKE '%${filter}%';";
+    }
+
+    if (connection != null) {
+      Results results = await connection.query(sql);
+      connection.close();
+
+      for (var row in results) {
+        return row[0];
+      }
+    }
+    return 0;
+  }
 }

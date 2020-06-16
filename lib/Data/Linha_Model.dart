@@ -28,7 +28,7 @@ class Model {
     return _databaseHelper.getLinhasList(filter, offset, limit);
   }
 
-  Future<int> geTotItens([String filter]) async {
+  Future<int> getTotItens([String filter]) async {
     return _databaseHelper.getTotItens(filter);
   }
 }

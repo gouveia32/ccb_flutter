@@ -25,7 +25,6 @@ class ListPageState extends State<ClienteListPage> {
 
   List<Cliente> _clienteList;
   var _filter = "";
-
   var totItens = 0;
 
   TextEditingController _textController = TextEditingController();
@@ -69,7 +68,10 @@ class ListPageState extends State<ClienteListPage> {
             decoration: InputDecoration(
               hintText: 'digite para filtrar por nome ou contato...',
             ),
-            onChanged: onItemChanged,
+            //onChanged: onItemChanged,
+            onEditingComplete: () {
+              onItemChanged(_textController.text);
+            },
           ),
         ),
         Expanded(
@@ -182,6 +184,15 @@ class ListPageState extends State<ClienteListPage> {
     }
   }
 
+  _getTotItens() {
+    Future<int> totItemFuture = _model.getTotItens(_filter);
+    totItemFuture.then((value) {
+      setState(() {
+        totItens = value;
+      });
+    });
+  }
+
   _getMoreData() {
     carregado = false;
 
@@ -193,9 +204,7 @@ class ListPageState extends State<ClienteListPage> {
         carregado = true;
         _offset = _currentMax;
         _currentMax += _MAX_LINES;
-        _model.getTotItens(_filter).then((value) {
-          totItens = value;
-        });
+        _getTotItens();
       });
     }).catchError((e) async {
       print(e.toString());

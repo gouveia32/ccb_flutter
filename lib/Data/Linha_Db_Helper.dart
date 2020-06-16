@@ -132,19 +132,21 @@ class DatabaseHelper {
   Future<int> getTotItens([String filter]) async {
     MySqlConnection connection = await this.databaseConnection;
 
-    int Result = 0;
     var sql = "SELECT COUNT(*) AS totItens " + "FROM Linhas ";
     if (filter == "") {
       sql += ";";
     } else {
-      sql +=
-          " WHERE codigo = '${filter}' OR nome like '%${filter}%' ORDER BY nome;";
+      sql += " WHERE codigo = '${filter}' OR nome LIKE '%${filter}%';";
     }
 
     if (connection != null) {
       Results results = await connection.query(sql);
       connection.close();
+
+      for (var row in results) {
+        return row[0];
+      }
     }
-    return Result;
+    return 0;
   }
 }

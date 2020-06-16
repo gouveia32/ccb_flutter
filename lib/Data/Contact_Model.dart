@@ -27,6 +27,10 @@ class Model {
       [String filter, int offset = 0, int limit = 10]) async {
     return _databaseHelper.getContactsList(filter, offset, limit);
   }
+
+  Future<int> getTotItens([String filter]) async {
+    return _databaseHelper.getTotItens(filter);
+  }
 }
 
 class Contact {
