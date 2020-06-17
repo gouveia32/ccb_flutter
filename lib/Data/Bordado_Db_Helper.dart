@@ -72,20 +72,26 @@ class DatabaseHelper {
     if (connection != null) {
       try {
         // Update query format is: Update <table> Set Address = 'New Address', Zip = 'New Zip' where Name is 'Pete'
-        String queryString = "UPDATE bordados set nome = '${bordado.nome}'," +
-            " contato_funcao = '${bordado.contatoFuncao}'," +
-            " contato_nome = '${bordado.contatoNome}', " +
-            " endereco = '${bordado.endereco}'," +
-            " cidade = '${bordado.cidade}'," +
-            " estado = '${bordado.estado}'," +
-            " cep = '${bordado.cep}'," +
-            " telefone1 = '${bordado.telefone1}'," +
-            " telefone2 = '${bordado.telefone2}'," +
-            " telefone3 = '${bordado.telefone3}'," +
-            " email = '${bordado.email}'," +
-            " obs = '${bordado.obs}'," +
-            " preco_base = '${bordado.precoBase}'" +
-            " WHERE id = '${bordado.id}'";
+        String queryString =
+            "UPDATE bordados set arquivo = '${bordado.arquivo}'," +
+                " descricao = '${bordado.descricao}'," +
+                " caminho = '${bordado.caminho}', " +
+                " disquete = '${bordado.disquete}'," +
+                " bastidor = '${bordado.bastidor}'," +
+                " grupo_id = '${bordado.grupoId}'," +
+                " preco = '${bordado.preco}'," +
+                " pontos = '${bordado.pontos}'," +
+                " cores = '${bordado.cores}'," +
+                " largura = '${bordado.largura}'," +
+                " altura = '${bordado.altura}'," +
+                " aprovado = '${bordado.aprovado}'," +
+                " alerta = '${bordado.alerta}'," +
+                " metragem = '${bordado.metragem}'," +
+                " imagem = '${bordado.imagem}'," +
+                " cor_fundo = '${bordado.corFundo}'," +
+                " obs_publica = '${bordado.obsPublica}'," +
+                " obs_restrita = '${bordado.obsRestrita}'" +
+                " WHERE id = '${bordado.id}'";
         await connection.query(queryString);
         connection.close();
       } catch (e) {
@@ -116,16 +122,19 @@ class DatabaseHelper {
     MySqlConnection connection = await this.databaseConnection;
 
     List<Bordado> listResults = List();
-    var sql = "SELECT id, nome,contato_funcao,contato_nome,cgc_cpf," +
-        "inscr_estadual,endereco,cidade,estado,cep,telefone1,telefone2," +
-        "telefone3,email,obs,preco_base FROM Bordados ";
+    var sql = "SELECT id, arquivo,descricao,caminho,disquete," +
+        "bastidor,grupo_id,preco,pontos,cores,largura,altura," +
+        "aprovado,alerta,metragem,imagem,cor_fundo,obs_publica," +
+        "obs_restrita FROM Bordados ";
 
     if (filter == null) {
-      sql +=
-          " ORDER BY nome LIMIT " + offset.toString() + "," + limit.toString();
+      sql += " ORDER BY arquivo LIMIT " +
+          offset.toString() +
+          "," +
+          limit.toString();
     } else {
       sql +=
-          " WHERE contato_nome like '%${filter}%' OR nome like '%${filter}%' ORDER BY nome LIMIT " +
+          " WHERE arquivo like '%${filter}%' OR descricao like '%${filter}%' ORDER BY nome LIMIT " +
               offset.toString() +
               "," +
               limit.toString();
@@ -153,7 +162,10 @@ class DatabaseHelper {
             row[12],
             row[13],
             row[14],
-            row[15]));
+            row[15],
+            row[16],
+            row[17],
+            row[18]));
       }
     }
     return listResults;
