@@ -4,6 +4,7 @@ import 'package:shopapp/screens/contactScreen.dart';
 import '../screens/user_products_screen.dart';
 import '../screens/orders_screen.dart';
 import '../Screens/clienteScreen.dart';
+import '../Screens/fornecedorScreen.dart';
 import '../Screens/linhaScreen.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -59,6 +60,14 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context);
               Navigator.of(context).pushNamed(ClienteListPage.routeName);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.assignment_ind),
+            title: Text('Fornecedores'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).pushNamed(FornecedorListPage.routeName);
             },
           ),
           ListTile(

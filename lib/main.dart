@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shopapp/screens/contactScreen.dart';
 
 import './Screens/clienteScreen.dart';
+import './Screens/FornecedorScreen.dart';
 import './Screens/linhaScreen.dart';
 import './screens/user_products_screen.dart';
 import './screens/products_overview_screen.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
           EditProductScreen.routeName: (ctx) => EditProductScreen(),
           ContactListPage.routeName: (ctx) => ContactListPage(),
           ClienteListPage.routeName: (ctx) => ClienteListPage(),
+          FornecedorListPage.routeName: (ctx) => FornecedorListPage(),
           LinhaListPage.routeName: (ctx) => LinhaListPage(),
         },
       ),
