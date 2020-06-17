@@ -113,10 +113,10 @@ class DatabaseHelper {
       sql += " WHERE (codigo = '${filter}' OR nome like '%${filter}%')";
       if (mostraEstoqueBaixo) {
         sql += " AND estoque_1 <= minimo AND minimo > 0";
-      } else {
-        if (mostraEstoqueBaixo) {
-          sql += " WHERE estoque_1 < minimo AND minimo > 0";
-        }
+      }
+    } else {
+      if (mostraEstoqueBaixo) {
+        sql += " WHERE estoque_1 < minimo AND minimo > 0";
       }
     }
     sql += " ORDER BY nome LIMIT ${offset.toString()},${limit.toString()};";
@@ -145,10 +145,10 @@ class DatabaseHelper {
       sql += " WHERE (codigo = '${filter}' OR nome like '%${filter}%')";
       if (mostraEstoqueBaixo) {
         sql += " AND estoque_1 <= minimo AND minimo > 0";
-      } else {
-        if (mostraEstoqueBaixo) {
-          sql += " WHERE estoque_1 < minimo AND minimo > 0";
-        }
+      }
+    } else {
+      if (mostraEstoqueBaixo) {
+        sql += " WHERE estoque_1 < minimo AND minimo > 0";
       }
     }
 

@@ -35,7 +35,7 @@ class ListPageState extends State<LinhaListPage> {
 
   onItemChanged(String value) {
     setState(() {
-      _filter = _textController.text;
+      _filter = value;
       _linhaList = null;
       _offset = 0;
     });
@@ -74,8 +74,7 @@ class ListPageState extends State<LinhaListPage> {
                   _mostraEstoqueBaixo = false;
                   // productsContainer.showAll();
                 }
-                _offset = 0;
-                _getMoreData();
+                onItemChanged(_textController.text);
               });
             },
             icon: Icon(Icons.more_vert),
@@ -117,8 +116,6 @@ class ListPageState extends State<LinhaListPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue[300],
         onPressed: () {
-          //_showDetailPage(Linha('', '', '', '', '', ''), 'Adicionar Contato');
-
           Navigator.push(
             context,
             MaterialPageRoute(
