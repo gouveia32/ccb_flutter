@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:typed_data';
 import './Bordado_Model.dart';
 import 'package:mysql1/mysql1.dart';
+
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'Constants.dart';
 
@@ -146,6 +150,12 @@ class DatabaseHelper {
       connection.close();
 
       for (var row in results) {
+        Uint8List bytesImage1;
+        bool bolWithImage1 = false;
+        try {
+          bytesImage1 = base64Decode(row[15]);
+        } catch (err) {}
+
         listResults.add(Bordado(
             row[0],
             row[1],
@@ -162,7 +172,7 @@ class DatabaseHelper {
             row[12],
             row[13],
             row[14],
-            row[15],
+            bytesImage1,
             row[16],
             row[17],
             row[18]));

@@ -95,7 +95,7 @@ class ListPageState extends State<ClienteListPage> {
                     'Novo Cliente')),
           );
         },
-        tooltip: 'Adicionar Linha',
+        tooltip: 'Adicionar Cliente',
         child: Icon(
           Icons.add,
           color: Colors.white,

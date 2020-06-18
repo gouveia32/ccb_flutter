@@ -143,11 +143,12 @@ class ClienteDetailState extends State<ClienteDetail> {
                         autocorrect: false,
                         textInputAction: TextInputAction.next,
                         focusNode: _nomeFocus,
-                        enabled: (_appBarTitle ==
-                            'Add Contact'), // name is the key. can't change it. must delete and re-create.
+                        enabled:
+                            true, // name is the key. can't change it. must delete and re-create.
                         onFieldSubmitted: (term) {
                           _nomeFocus.unfocus();
-                          FocusScope.of(context).requestFocus(_telefone1Focus);
+                          FocusScope.of(context)
+                              .requestFocus(_contatoFuncaoFocus);
                         },
                         onSaved: (String value) {
                           print("OnSaved: $value");
@@ -191,7 +192,7 @@ class ClienteDetailState extends State<ClienteDetail> {
                                 _cliente.contatoNome =
                                     _contatoFuncaoController.text;
                                 if (value.length > 19) {
-                                  return "Telefone deve ter no máximo que 20 caracters";
+                                  return "Função deve ter no máximo que 20 caracters";
                                 }
                               },
                               decoration: _inputDecoration(textStyle, "Função"),

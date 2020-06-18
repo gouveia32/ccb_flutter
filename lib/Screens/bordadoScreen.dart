@@ -6,7 +6,7 @@ import '../Data/Bordado_Model.dart';
 
 import 'bordadoDetailScreen.dart';
 
-const _MAX_LINES = 12;
+const _MAX_LINES = 4;
 
 class BordadoListPage extends StatefulWidget {
   static const routeName = '/bordado-list';
@@ -124,10 +124,10 @@ class ListPageState extends State<BordadoListPage> {
           child: ListTile(
             contentPadding: EdgeInsets.only(left: 8),
             title: Text(
-              this._bordadoList[position].arquivo,
+              this._bordadoList[position].descricao,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            subtitle: Text(this._bordadoList[position].descricao),
+            subtitle: Text(this._bordadoList[position].arquivo),
             trailing: GestureDetector(
               child: Icon(
                 Icons.delete,
