@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopapp/Screens/bordadoScreen.dart';
 import 'package:shopapp/screens/contactScreen.dart';
 
 import '../screens/user_products_screen.dart';
@@ -76,6 +77,14 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context);
               Navigator.of(context).pushNamed(LinhaListPage.routeName);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.threed_rotation),
+            title: Text('Bordados'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).pushNamed(BordadoListPage.routeName);
             },
           ),
         ],

@@ -14,6 +14,7 @@ import './providers/cart.dart';
 import './providers/orders.dart';
 import './screens/orders_screen.dart';
 import './screens/edit_product_screen.dart';
+import 'Screens/bordadoScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
           ClienteListPage.routeName: (ctx) => ClienteListPage(),
           FornecedorListPage.routeName: (ctx) => FornecedorListPage(),
           LinhaListPage.routeName: (ctx) => LinhaListPage(),
+          BordadoListPage.routeName: (ctx) => BordadoListPage(),
         },
       ),
     );

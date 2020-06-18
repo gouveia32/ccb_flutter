@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Data/Bordado_Model.dart';
@@ -89,9 +90,9 @@ class ListPageState extends State<BordadoListPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => bordadoDetail(
-                    Bordado(0, '', '', '', '', '', 0, 0.0, 0, 0, 0, 0, false,
-                        false, 0, '', 0, '', ''),
+                builder: (context) => BordadoDetail(
+                    Bordado(0, '', '', '', '', '', 0, 0.0, 0, 0, 0, 0, 0, 0, 0,
+                        Uint8List(0), 0, '', ''),
                     'Novo Bordado')),
           );
         },

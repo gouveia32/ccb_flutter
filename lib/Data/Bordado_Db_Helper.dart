@@ -134,7 +134,7 @@ class DatabaseHelper {
           limit.toString();
     } else {
       sql +=
-          " WHERE arquivo like '%${filter}%' OR descricao like '%${filter}%' ORDER BY nome LIMIT " +
+          " WHERE arquivo like '%${filter}%' OR descricao like '%${filter}%' ORDER BY arquivo LIMIT " +
               offset.toString() +
               "," +
               limit.toString();
@@ -179,7 +179,7 @@ class DatabaseHelper {
       sql += ";";
     } else {
       sql +=
-          " WHERE nome LIKE '%${filter}%' OR contato_nome LIKE '%${filter}%';";
+          " WHERE arquivo LIKE '%${filter}%' OR descricao LIKE '%${filter}%';";
     }
 
     if (connection != null) {

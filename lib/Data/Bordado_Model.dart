@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'Bordado_Db_Helper.dart';
 
 class Model {
@@ -46,10 +48,10 @@ class Bordado {
   int _cores;
   int _largura;
   int _altura;
-  bool _aprovado;
-  bool _alerta;
+  int _aprovado;
+  int _alerta;
   int _metragem;
-  String _imagem;
+  Uint8List _imagem;
   int _corFundo;
   String _obsPublica;
   String _obsRestrita;
@@ -87,10 +89,10 @@ class Bordado {
   int get cores => _cores;
   int get largura => _largura;
   int get altura => _altura;
-  bool get aprovado => _aprovado;
-  bool get alerta => _alerta;
+  int get aprovado => _aprovado;
+  int get alerta => _alerta;
   int get metragem => _metragem;
-  String get imagem => _imagem;
+  Uint8List get imagem => _imagem;
   int get corFundo => _corFundo;
   String get obsPublica => _obsPublica;
   String get obsRestrita => _obsRestrita;
@@ -161,11 +163,11 @@ class Bordado {
     }
   }
 
-  set aprovado(bool novoAprovado) {
+  set aprovado(int novoAprovado) {
     this._aprovado = novoAprovado;
   }
 
-  set alerta(bool novoAlerta) {
+  set alerta(int novoAlerta) {
     this._alerta = novoAlerta;
   }
 
@@ -175,8 +177,8 @@ class Bordado {
     }
   }
 
-  set imagem(String novaImagem) {
-    if (novaImagem.length <= 20) {
+  set imagem(Uint8List novaImagem) {
+    if (novaImagem.length <= 0) {
       this._imagem = novaImagem;
     }
   }
