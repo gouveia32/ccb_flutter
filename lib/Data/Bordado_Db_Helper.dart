@@ -151,7 +151,6 @@ class DatabaseHelper {
 
       for (var row in results) {
         Uint8List bytesImage1;
-        bool bolWithImage1 = false;
         try {
           bytesImage1 = base64Decode(row[15]);
         } catch (err) {}

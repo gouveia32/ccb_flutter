@@ -6,7 +6,7 @@ import '../Data/Bordado_Model.dart';
 
 import 'bordadoDetailScreen.dart';
 
-const _MAX_LINES = 4;
+const _MAX_LINES = 10;
 
 class BordadoListPage extends StatefulWidget {
   static const routeName = '/bordado-list';
@@ -116,31 +116,41 @@ class ListPageState extends State<BordadoListPage> {
           return CupertinoActivityIndicator();
         }
 
-        return Card(
-          elevation: 3.0,
-          borderOnForeground: true,
-          color: Colors.blue[100],
-          semanticContainer: true,
-          child: ListTile(
-            contentPadding: EdgeInsets.only(left: 8),
-            title: Text(
-              this._bordadoList[position].descricao,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(this._bordadoList[position].arquivo),
-            trailing: GestureDetector(
-              child: Icon(
-                Icons.delete,
-                color: Colors.redAccent,
+        return new Stack(
+          children: <Widget>[
+            Card(
+              elevation: 3.0,
+              borderOnForeground: true,
+              color: Colors.blue[100],
+              semanticContainer: true,
+              child: ListTile(
+                contentPadding: EdgeInsets.only(left: 60),
+                title: Text(
+                  this._bordadoList[position].descricao,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(this._bordadoList[position].arquivo),
+                trailing: GestureDetector(
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.redAccent,
+                  ),
+                  onTap: () {
+                    _deleteBordado(context, _bordadoList[position]);
+                  },
+                ),
+                onTap: () {
+                  _showDetailPage(
+                      this._bordadoList[position], 'Alterar Bordado');
+                },
               ),
-              onTap: () {
-                _deleteBordado(context, _bordadoList[position]);
-              },
             ),
-            onTap: () {
-              _showDetailPage(this._bordadoList[position], 'Alterar Bordado');
-            },
-          ),
+            CircleAvatar(
+              radius: 25,
+              //backgroundImage: MemoryImage(this._bordadoList[position].imagem),
+              backgroundColor: Colors.blueGrey[50],
+            ),
+          ],
         );
       },
       itemCount: this._bordadoList.length,
