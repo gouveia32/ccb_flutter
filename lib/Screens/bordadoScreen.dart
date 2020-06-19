@@ -148,7 +148,8 @@ class ListPageState extends State<BordadoListPage> {
             CircleAvatar(
               radius: 25,
               //backgroundImage: MemoryImage(this._bordadoList[position].imagem),
-              backgroundColor: Colors.blueGrey[50],
+              backgroundColor: Colors.blue[300],
+              backgroundImage: AssetImage('assets/img/mars.png'),
             ),
           ],
         );

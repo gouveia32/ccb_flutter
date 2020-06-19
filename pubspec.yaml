@@ -29,6 +29,8 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+  assets:
+    - assets/img/lmars.png
 
   uses-material-design: true
 
@@ -41,6 +43,8 @@ flutter:
     - family: Anton
       fonts:
         - asset: assets/fonts/Anton-Regular.ttf
+  
+
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
