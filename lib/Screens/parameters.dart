@@ -1,123 +1,222 @@
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:provider/provider.dart';
+import '../Data/Parametro_Model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
-import '../widgets/app_drawer.dart';
-
-class Model {
-  static final Model _model = new Model._internal();
-
-  factory Model() {
-    return _model;
-  }
-
-  Model._internal();
-}
-
-class Parametro {
-  String host = '10.0.2.2';
-  String user = 'root';
-  String bd = 'ccb';
-  String password = 'ebtaju';
-
-  Parametro(this.host, this.user, this.bd, this.password);
-}
-
-class ParametroEdit extends StatefulWidget {
+class ParametroDetail extends StatefulWidget {
   final String _appBarTitle;
   final Parametro _parametro;
 
-  static const routeName = '/parameters';
+  ParametroDetail(this._parametro, this._appBarTitle);
 
-  ParametroEdit(this._parametro, this._appBarTitle);
+  static const routeName = '/parametros';
 
   @override
   State<StatefulWidget> createState() {
-    return ParametroState(this._parametro, this._appBarTitle);
+    return ParametroDetailState(this._parametro, this._appBarTitle);
   }
 }
 
-class ParametroState extends State<ParametroEdit> {
+class ParametroDetailState extends State<ParametroDetail> {
   Model _model = Model();
 
   final String _appBarTitle;
   Parametro _parametro;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _hostController = TextEditingController();
   final TextEditingController _userController = TextEditingController();
-  final TextEditingController _bdController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _dbController = TextEditingController();
+
+  final FocusNode _hostFocus = FocusNode();
+  final FocusNode _userFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
+  final FocusNode _dbFocus = FocusNode();
+
+  ParametroDetailState(this._parametro, this._appBarTitle);
 
   @override
   void initState() {
     super.initState();
-    final FocusNode _hostFocus = FocusNode();
-    final FocusNode _userFocus = FocusNode();
-    final FocusNode _bdFocus = FocusNode();
-    final FocusNode _passwordFocus = FocusNode();
 
-    ParametroState(this._parametro, this._appBarTitle);
+    if (_appBarTitle == "Alterar Contato") {
+      _hostController.text = _parametro.host;
+      _userController.text = _parametro.user;
+      _passwordController.text = _parametro.password;
+      _dbController.text = _parametro.db;
+    }
+  }
+
+  @override
+  void dispose() {
+    _hostController.dispose();
+    _userController.dispose();
+    _passwordController.dispose();
+    _dbController.dispose();
+
+    _hostFocus.dispose();
+    _userFocus.dispose();
+    _passwordFocus.dispose();
+    _dbFocus.dispose();
+
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = Theme.of(context).textTheme.headline6;
-    return Scaffold(
-      drawer: AppDrawer(),
-      appBar: AppBar(
-        title: Text('Parâmetros'),
-      ),
-      body: Stack(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(
-                top: 60.0, bottom: 10.0, left: 6.0, right: 6.0),
-            child: TextFormField(
-              controller: _hostController,
-              autocorrect: false,
-              textInputAction: TextInputAction.next,
-              enabled:
-                  true, // name is the key. can't change it. must delete and re-create.
-              onFieldSubmitted: (term) {
-                _hostFocus.unfocus();
-                FocusScope.of(context).requestFocus(_userFocus);
-              },
-              onSaved: (String value) {
-                print("OnSaved: $value");
-                _parametro.host = value;
-              },
-              validator: (String value) {
-                _parametro.host = _hostController.text;
-                if (value.isEmpty) {
-                  return 'host é obrigatório';
-                } else if (value.length > 119) {
-                  return 'host deve ter no máximo 120 caracters';
-                }
-              },
-              style: textStyle,
-              decoration: _inputDecoration(textStyle, "Host"),
+    TextStyle textStyle = Theme.of(context).textTheme.headline5;
+    return WillPopScope(
+      onWillPop: () {
+        // For when user presses Back navigation button in device navigationBar (Android)
+        Navigator.pop(context, false);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white),
+          title: Text(
+            _appBarTitle,
+            style: TextStyle(
+              color: Colors.white,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: RaisedButton(
-              child: Text('Read'),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
               onPressed: () {
-                _read();
-              },
+                Navigator.pop(context, false);
+              }),
+        ),
+        body: SafeArea(
+          child: Form(
+            key: _formKey,
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                child: ListView(
+                  children: <Widget>[
+                    // Name
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 30.0, bottom: 15.0, left: 6.0, right: 6.0),
+                      child: TextFormField(
+                        controller: _hostController,
+                        autocorrect: false,
+                        textInputAction: TextInputAction.next,
+                        focusNode: _hostFocus,
+                        //enabled: (_appBarTitle == 'Add Parametro'), // name is the key. can't change it. must delete and re-create.
+                        onFieldSubmitted: (term) {
+                          _hostFocus.unfocus();
+                          FocusScope.of(context).requestFocus(_userFocus);
+                        },
+                        onSaved: (String value) {
+                          print("OnSaved: $value");
+                          _parametro.host = value;
+                        },
+                        validator: (String value) {
+                          _parametro.host = _hostController.text;
+                          if (value.isEmpty) {
+                            return 'Não pode ser branco';
+                          } else if (value.length > 19) {
+                            return 'host deve ter no máximo 20 caracteres.';
+                          }
+                        },
+                        style: textStyle,
+                        decoration: _inputDecoration(textStyle, "host"),
+                      ),
+                    ),
+                    // Home and Mobile Phones
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Container(
+                          width: 170,
+                          height: 50,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: 15.0, left: 6.0),
+                            child: TextFormField(
+                              controller: _userController,
+                              //keyboardType: TextInputType.number,
+                              autocorrect: false,
+                              textInputAction: TextInputAction.next,
+                              focusNode: _userFocus,
+                              onFieldSubmitted: (term) {
+                                _userFocus.unfocus();
+                                FocusScope.of(context)
+                                    .requestFocus(_passwordFocus);
+                              },
+                              style: textStyle,
+                              validator: (String value) {
+                                _parametro.user = _userController.text;
+                                if (value.length > 19) {
+                                  return "Phone numbers must be less than 30 characters";
+                                }
+                              },
+                              decoration: _inputDecoration(textStyle, "user"),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 170,
+                          height: 50,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: 15.0, right: 6.0),
+                            child: TextFormField(
+                              controller: _passwordController,
+                              //keyboardType: TextInputType.phone,
+                              autocorrect: false,
+                              textInputAction: TextInputAction.next,
+                              focusNode: _passwordFocus,
+                              onFieldSubmitted: (term) {
+                                _passwordFocus.unfocus();
+                                FocusScope.of(context).requestFocus(_dbFocus);
+                              },
+                              style: textStyle,
+                              validator: (String value) {
+                                _parametro.password = _passwordController.text;
+                                if (value.length > 29) {
+                                  return "Phone numbers must be less than 30 characters";
+                                }
+                              },
+                              decoration:
+                                  _inputDecoration(textStyle, "password"),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Email
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 30.0, bottom: 15.0, left: 6.0, right: 6.0),
+                      child: TextFormField(
+                        controller: _dbController,
+                        keyboardType: TextInputType.emailAddress,
+                        autocorrect: false,
+                        textInputAction: TextInputAction.next,
+                        focusNode: _dbFocus,
+                        onFieldSubmitted: (term) {
+                          _dbFocus.unfocus();
+                          FocusScope.of(context).requestFocus(_hostFocus);
+                        },
+                        validator: (String value) {
+                          _parametro.db = _dbController.text;
+                          if (value.length > 19) {
+                            return 'Email must be less than 20 characters';
+                          }
+                        },
+                        style: textStyle,
+                        decoration: _inputDecoration(textStyle, "db"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: RaisedButton(
-              child: Text('Save'),
-              onPressed: () {
-                _save();
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -129,8 +228,6 @@ class ParametroState extends State<ParametroEdit> {
         errorStyle: TextStyle(color: Colors.yellowAccent, fontSize: 15.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)));
   }
-
-  // Replace these two methods in the examples that follow
 
   _read() async {
     final prefs = await SharedPreferences.getInstance();

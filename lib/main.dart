@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
           FornecedorListPage.routeName: (ctx) => FornecedorListPage(),
           LinhaListPage.routeName: (ctx) => LinhaListPage(),
           BordadoListPage.routeName: (ctx) => BordadoListPage(),
-          ParametroEdit.routeName: (ctx) => ParametroEdit(null, null),
+          ParametroDetail.routeName: (ctx) => ParametroDetail(null, null),
         },
       ),
     );

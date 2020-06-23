@@ -34,7 +34,7 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.payment),
             title: Text('Parâmetros'),
             onTap: () {
-              Navigator.of(context).pushNamed(ParametroEdit.routeName);
+              Navigator.of(context).pushNamed(ParametroDetail.routeName);
             },
           ),
           ListTile(
