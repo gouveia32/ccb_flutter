@@ -7,6 +7,7 @@ import '../screens/orders_screen.dart';
 import '../Screens/clienteScreen.dart';
 import '../Screens/fornecedorScreen.dart';
 import '../Screens/linhaScreen.dart';
+import '../Screens/parameters.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -29,6 +30,13 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           //Divider(),
+          ListTile(
+            leading: Icon(Icons.payment),
+            title: Text('Parâmetros'),
+            onTap: () {
+              Navigator.of(context).pushNamed(ParamScreen.routeName);
+            },
+          ),
           ListTile(
             leading: Icon(Icons.payment),
             title: Text('Pagamento'),

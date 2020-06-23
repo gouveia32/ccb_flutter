@@ -30,7 +30,7 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/img/lmars.png
+    - assets/img/mars.png
 
   uses-material-design: true
 
