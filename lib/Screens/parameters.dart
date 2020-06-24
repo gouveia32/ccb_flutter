@@ -19,7 +19,7 @@ class ParametroDetail extends StatefulWidget {
 }
 
 class ParametroDetailState extends State<ParametroDetail> {
-  Model _model = Model();
+  //Model _model = Model();
 
   final String _appBarTitle;
   Parametro _parametro;
@@ -41,12 +41,14 @@ class ParametroDetailState extends State<ParametroDetail> {
   void initState() {
     super.initState();
 
-    if (_appBarTitle == "Alterar Contato") {
-      _hostController.text = _parametro.host;
-      _userController.text = _parametro.user;
-      _passwordController.text = _parametro.password;
-      _dbController.text = _parametro.db;
+    if (!_appBarTitle.contains('Alterar')) {
+      _parametro = Parametro('10.0.3.2', 'root', 'ebtaju', 'ccb');
+      _read();
     }
+    _hostController.text = _parametro.host;
+    _userController.text = _parametro.user;
+    _passwordController.text = _parametro.password;
+    _dbController.text = _parametro.db;
   }
 
   @override
@@ -211,6 +213,26 @@ class ParametroDetailState extends State<ParametroDetail> {
                         decoration: _inputDecoration(textStyle, "db"),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 40.0, right: 40.0),
+                      child: RaisedButton(
+                        color: Theme.of(context).accentColor,
+                        textColor: Theme.of(context).primaryColorDark,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                        child: Text(
+                          'Gravar',
+                          textScaleFactor: 1.5,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            if (_formKey.currentState.validate()) {
+                              _save();
+                            }
+                          });
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -231,16 +253,14 @@ class ParametroDetailState extends State<ParametroDetail> {
 
   _read() async {
     final prefs = await SharedPreferences.getInstance();
-    final key = 'my_int_key';
-    final value = prefs.getInt(key) ?? 0;
-    print('read: $value');
+    _parametro.host = prefs.getString('host');
+
+    print('host: $_parametro.host');
   }
 
   _save() async {
     final prefs = await SharedPreferences.getInstance();
-    final key = 'my_int_key';
-    final value = 42;
-    prefs.setInt(key, value);
-    print('saved $value');
+    prefs.setString('host', _parametro.host);
+    print('saved $_parametro.host');
   }
 }
