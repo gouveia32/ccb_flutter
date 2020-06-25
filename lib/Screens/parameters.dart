@@ -23,6 +23,7 @@ class ParametroDetailState extends State<ParametroDetail> {
 
   final String _appBarTitle;
   Parametro _parametro;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _hostController = TextEditingController();
@@ -253,14 +254,21 @@ class ParametroDetailState extends State<ParametroDetail> {
 
   _read() async {
     final prefs = await SharedPreferences.getInstance();
-    _parametro.host = prefs.getString('host');
+    _parametro.host = await prefs.getString('host');
+    _parametro.user = await prefs.getString('user');
+    _parametro.password = await prefs.getString('password');
+    _parametro.db = await prefs.getString('db');
 
-    print('host: $_parametro.host');
+    print('host: ${_parametro.host}');
   }
 
   _save() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('host', _parametro.host);
-    print('saved $_parametro.host');
+    prefs.setString('user', _parametro.user);
+    prefs.setString('password', _parametro.password);
+    prefs.setString('db', _parametro.db);
+    print('saved ${_parametro.host}');
+    Navigator.pop(context, true);
   }
 }
