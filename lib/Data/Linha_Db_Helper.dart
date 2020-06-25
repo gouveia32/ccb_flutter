@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import './Linha_Model.dart';
 import 'package:mysql1/mysql1.dart';
 import 'Constants.dart';
+import './Parametro_Model.dart';
 
 class DatabaseHelper {
   static DatabaseHelper _databaseHelper;
@@ -16,10 +19,25 @@ class DatabaseHelper {
     return _databaseHelper;
   }
 
+  Future<Parametro> _read() async {
+    final prefs = await SharedPreferences.getInstance();
+    Parametro parametro = Parametro('', '', '', '');
+    parametro.host = prefs.getString('host') ?? '10.0.3.2';
+    parametro.user = prefs.getString('user') ?? 'root';
+    parametro.password = prefs.getString('password');
+    parametro.db = prefs.getString('db');
+    return parametro;
+  }
+
   Future<MySqlConnection> get databaseConnection async {
+    Parametro prm = await _read();
     try {
       _databaseConnection = await MySqlConnection.connect(ConnectionSettings(
-          host: host, port: 3306, user: user, db: db, password: password));
+          host: prm.host,
+          port: 3306,
+          user: prm.user,
+          db: prm.db,
+          password: prm.password));
     } catch (e) {
       print(e.toString());
       rethrow;
