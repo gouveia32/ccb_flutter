@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopapp/screens/contactScreen.dart';
 
 import './Screens/clienteScreen.dart';
@@ -18,6 +19,7 @@ import 'Screens/bordadoScreen.dart';
 import 'Screens/parameters.dart';
 
 void main() {
+  SharedPreferences.setMockInitialValues({});
   runApp(MyApp());
 }
 

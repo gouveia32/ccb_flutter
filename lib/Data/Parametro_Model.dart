@@ -22,25 +22,25 @@ class Parametro {
   String get db => _db;
 
   set host(String newHost) {
-    if (newHost.length <= 20) {
+    if (newHost != null) {
       this._host = newHost;
     }
   }
 
   set user(String newUser) {
-    if (newUser.length <= 20) {
+    if (newUser != null) {
       this._user = newUser;
     }
   }
 
   set password(String newPassword) {
-    if (newPassword.length <= 20) {
+    if (newPassword != null) {
       this._password = newPassword;
     }
   }
 
   set db(String newDb) {
-    if (newDb.length <= 20) {
+    if (newDb != null) {
       this._db = newDb;
     }
   }

@@ -2,34 +2,13 @@ import 'dart:async';
 import './Contact_Model.dart';
 import 'package:mysql1/mysql1.dart';
 
-import 'Constants.dart';
+import 'Db_Connection.dart';
 
 class DatabaseHelper {
-  static DatabaseHelper _databaseHelper;
-  static MySqlConnection _databaseConnection;
-
-  DatabaseHelper._createInstance();
-
-  factory DatabaseHelper() {
-    if (_databaseHelper == null) {
-      _databaseHelper = DatabaseHelper._createInstance();
-    }
-    return _databaseHelper;
-  }
-
-  Future<MySqlConnection> get databaseConnection async {
-    try {
-      _databaseConnection = await MySqlConnection.connect(ConnectionSettings(
-          host: host, port: 3306, user: user, db: db, password: password));
-    } catch (e) {
-      print(e.toString());
-      rethrow;
-    }
-    return _databaseConnection;
-  }
+  final DbHelper _dbHelper = DbHelper();
 
   Future<void> insertContact(Contact contact) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     if (connection != null) {
       try {
@@ -52,7 +31,7 @@ class DatabaseHelper {
   }
 
   Future<int> updateContact(Contact contact) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     if (connection != null) {
       try {
@@ -69,7 +48,7 @@ class DatabaseHelper {
   }
 
   Future<void> deleteContact(Contact contact) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     if (connection != null) {
       try {
@@ -86,7 +65,7 @@ class DatabaseHelper {
 
   Future<List<Contact>> getContactsList(
       [String filter, int offset = 0, int limit = 10]) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     List<Contact> listResults = List();
     var sql =
@@ -116,7 +95,7 @@ class DatabaseHelper {
   }
 
   Future<int> getTotItens([String filter]) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     var sql = "SELECT COUNT(*) AS totItens " + "FROM contacts ";
 

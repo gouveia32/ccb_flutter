@@ -67,7 +67,7 @@ class ListPageState extends State<FornecedorListPage> {
           child: TextField(
             controller: _textController,
             decoration: InputDecoration(
-              hintText: 'digite para filtrar por nome ou contato...',
+              hintText: 'digite para filtrar por nome ou email...',
             ),
             //onChanged: onItemChanged,
             onEditingComplete: () {

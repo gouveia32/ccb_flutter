@@ -1,52 +1,14 @@
 import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import './Linha_Model.dart';
 import 'package:mysql1/mysql1.dart';
-import 'Constants.dart';
-import './Parametro_Model.dart';
+
+import 'Db_Connection.dart';
 
 class DatabaseHelper {
-  static DatabaseHelper _databaseHelper;
-  static MySqlConnection _databaseConnection;
-
-  DatabaseHelper._createInstance();
-
-  factory DatabaseHelper() {
-    if (_databaseHelper == null) {
-      _databaseHelper = DatabaseHelper._createInstance();
-    }
-    return _databaseHelper;
-  }
-
-  Future<Parametro> _read() async {
-    final prefs = await SharedPreferences.getInstance();
-    Parametro parametro = Parametro('', '', '', '');
-    parametro.host = prefs.getString('host') ?? '10.0.3.2';
-    parametro.user = prefs.getString('user') ?? 'root';
-    parametro.password = prefs.getString('password');
-    parametro.db = prefs.getString('db');
-    return parametro;
-  }
-
-  Future<MySqlConnection> get databaseConnection async {
-    Parametro prm = await _read();
-    try {
-      _databaseConnection = await MySqlConnection.connect(ConnectionSettings(
-          host: prm.host,
-          port: 3306,
-          user: prm.user,
-          db: prm.db,
-          password: prm.password));
-    } catch (e) {
-      print(e.toString());
-      rethrow;
-    }
-    return _databaseConnection;
-  }
+  final DbHelper _dbHelper = DbHelper();
 
   Future<void> insertLinha(Linha linha) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     if (connection != null) {
       try {
@@ -74,7 +36,7 @@ class DatabaseHelper {
   }
 
   Future<int> updateLinha(Linha linha) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     if (connection != null) {
       try {
@@ -99,7 +61,7 @@ class DatabaseHelper {
   }
 
   Future<void> deleteLinha(Linha linha) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     if (connection != null) {
       try {
@@ -120,7 +82,7 @@ class DatabaseHelper {
       bool mostraEstoqueBaixo,
       int offset = 0,
       int limit = 10]) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     List<Linha> listResults = List();
     var sql = "SELECT codigo, nome,material_nome,material_fabricante," +
@@ -156,7 +118,7 @@ class DatabaseHelper {
     String filter,
     bool mostraEstoqueBaixo = false,
   ]) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     var sql = "SELECT COUNT(*) AS totItens " + "FROM Linhas ";
     if (filter != "") {

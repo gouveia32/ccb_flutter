@@ -22,7 +22,7 @@ class ParametroDetailState extends State<ParametroDetail> {
   //Model _model = Model();
 
   final String _appBarTitle;
-  Parametro _parametro;
+  Parametro _prm;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -36,20 +36,15 @@ class ParametroDetailState extends State<ParametroDetail> {
   final FocusNode _passwordFocus = FocusNode();
   final FocusNode _dbFocus = FocusNode();
 
-  ParametroDetailState(this._parametro, this._appBarTitle);
+  ParametroDetailState(_prm, this._appBarTitle);
 
   @override
-  void initState() {
+  initState() {
     super.initState();
 
-    if (!_appBarTitle.contains('Alterar')) {
-      _parametro = Parametro('10.0.3.2', 'root', 'ebtaju', 'ccb');
-      _read();
-    }
-    _hostController.text = _parametro.host;
-    _userController.text = _parametro.user;
-    _passwordController.text = _parametro.password;
-    _dbController.text = _parametro.db;
+    _prm = Parametro('', '', '', '');
+
+    restore();
   }
 
   @override
@@ -114,10 +109,10 @@ class ParametroDetailState extends State<ParametroDetail> {
                         },
                         onSaved: (String value) {
                           print("OnSaved: $value");
-                          _parametro.host = value;
+                          _prm.host = value;
                         },
                         validator: (String value) {
-                          _parametro.host = _hostController.text;
+                          _prm.host = _hostController.text;
                           if (value.isEmpty) {
                             return 'Não pode ser branco';
                           } else if (value.length > 19) {
@@ -151,7 +146,7 @@ class ParametroDetailState extends State<ParametroDetail> {
                               },
                               style: textStyle,
                               validator: (String value) {
-                                _parametro.user = _userController.text;
+                                _prm.user = _userController.text;
                                 if (value.length > 19) {
                                   return "Phone numbers must be less than 30 characters";
                                 }
@@ -178,7 +173,7 @@ class ParametroDetailState extends State<ParametroDetail> {
                               },
                               style: textStyle,
                               validator: (String value) {
-                                _parametro.password = _passwordController.text;
+                                _prm.password = _passwordController.text;
                                 if (value.length > 29) {
                                   return "Phone numbers must be less than 30 characters";
                                 }
@@ -205,7 +200,7 @@ class ParametroDetailState extends State<ParametroDetail> {
                           FocusScope.of(context).requestFocus(_hostFocus);
                         },
                         validator: (String value) {
-                          _parametro.db = _dbController.text;
+                          _prm.db = _dbController.text;
                           if (value.length > 19) {
                             return 'Email must be less than 20 characters';
                           }
@@ -252,23 +247,45 @@ class ParametroDetailState extends State<ParametroDetail> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)));
   }
 
-  _read() async {
+  Future<Parametro> _read() async {
     final prefs = await SharedPreferences.getInstance();
-    _parametro.host = await prefs.getString('host');
-    _parametro.user = await prefs.getString('user');
-    _parametro.password = await prefs.getString('password');
-    _parametro.db = await prefs.getString('db');
+    Parametro prm = Parametro('', '', '', '');
+    prm.host = prefs.getString('host') ?? 'localhost';
+    prm.user = prefs.getString('user') ?? 'ccb';
+    prm.password = prefs.getString('password') ?? 'Poqw0001';
+    prm.db = prefs.getString('db') ?? 'ccb';
 
-    print('host: ${_parametro.host}');
+    print('host: ${prm.host}');
+    //this._prm = prm;
+    return prm;
   }
 
   _save() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('host', _parametro.host);
-    prefs.setString('user', _parametro.user);
-    prefs.setString('password', _parametro.password);
-    prefs.setString('db', _parametro.db);
-    print('saved ${_parametro.host}');
+    prefs.setString('host', _prm.host);
+    prefs.setString('user', _prm.user);
+    prefs.setString('password', _prm.password);
+    prefs.setString('db', _prm.db);
+    print('saved ${_prm.host}');
     Navigator.pop(context, true);
+  }
+
+  restore() async {
+    print('restoring...');
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    Parametro prm = Parametro('', '', '', '');
+
+    try {
+      prm = await _read();
+    } catch (e) {
+      print('error: $e');
+    } finally {
+      setState(() {
+        this._prm.host = prm.host;
+        this._prm.user = prm.user;
+        this._prm.password = prm.password;
+        this._prm.db = prm.db;
+      });
+    }
   }
 }

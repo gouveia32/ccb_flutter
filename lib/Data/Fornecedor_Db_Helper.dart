@@ -2,34 +2,12 @@ import 'dart:async';
 import './Fornecedor_Model.dart';
 import 'package:mysql1/mysql1.dart';
 
-import 'Constants.dart';
+import 'Db_Connection.dart';
 
 class DatabaseHelper {
-  static DatabaseHelper _databaseHelper;
-  static MySqlConnection _databaseConnection;
-
-  DatabaseHelper._createInstance();
-
-  factory DatabaseHelper() {
-    if (_databaseHelper == null) {
-      _databaseHelper = DatabaseHelper._createInstance();
-    }
-    return _databaseHelper;
-  }
-
-  Future<MySqlConnection> get databaseConnection async {
-    try {
-      _databaseConnection = await MySqlConnection.connect(ConnectionSettings(
-          host: host, port: 3306, user: user, db: db, password: password));
-    } catch (e) {
-      print(e.toString());
-      rethrow;
-    }
-    return _databaseConnection;
-  }
-
+  final DbHelper _dbHelper = DbHelper();
   Future<void> insertFornecedor(Fornecedor fornecedor) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     if (connection != null) {
       try {
@@ -61,7 +39,7 @@ class DatabaseHelper {
   }
 
   Future<int> updateFornecedor(Fornecedor fornecedor) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     if (connection != null) {
       try {
@@ -90,7 +68,7 @@ class DatabaseHelper {
   }
 
   Future<void> deleteFornecedor(Fornecedor fornecedor) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     if (connection != null) {
       try {
@@ -108,7 +86,7 @@ class DatabaseHelper {
 
   Future<List<Fornecedor>> getFornecedoresList(
       [String filter, int offset = 0, int limit = 10]) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     List<Fornecedor> listResults = List();
     var sql = "SELECT id, nome,contato_funcao,contato_nome,cgc_cpf," +
@@ -120,7 +98,7 @@ class DatabaseHelper {
           " ORDER BY nome LIMIT " + offset.toString() + "," + limit.toString();
     } else {
       sql +=
-          " WHERE contato_nome like '%${filter}%' OR nome like '%${filter}%' ORDER BY nome LIMIT " +
+          " WHERE nome like '%${filter}%' OR email like '%${filter}%' ORDER BY nome LIMIT " +
               offset.toString() +
               "," +
               limit.toString();
@@ -154,7 +132,7 @@ class DatabaseHelper {
   }
 
   Future<int> getTotItens([String filter]) async {
-    MySqlConnection connection = await this.databaseConnection;
+    MySqlConnection connection = await _dbHelper.databaseConnection;
 
     var sql = "SELECT COUNT(*) AS totItens " + "FROM fornecedores ";
     if (filter == "") {
