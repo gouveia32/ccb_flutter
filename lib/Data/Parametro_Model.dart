@@ -1,3 +1,5 @@
+import 'Parametro_Db_Helper.dart';
+
 class Model {
   static final Model _model = new Model._internal();
 
@@ -6,6 +8,12 @@ class Model {
   }
 
   Model._internal();
+
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  Future<Parametro> read() async {
+    return _databaseHelper.read();
+  }
 }
 
 class Parametro {

@@ -24,6 +24,8 @@ class ParametroDetailState extends State<ParametroDetail> {
   final String _appBarTitle;
   Parametro _prm;
 
+  Model _model = Model();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _hostController = TextEditingController();
@@ -42,9 +44,9 @@ class ParametroDetailState extends State<ParametroDetail> {
   initState() {
     super.initState();
 
-    _prm = Parametro('', '', '', '');
+    //_prm = Parametro('', '', '', '');
 
-    restore();
+    _getMoreData();
   }
 
   @override
@@ -65,6 +67,10 @@ class ParametroDetailState extends State<ParametroDetail> {
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle = Theme.of(context).textTheme.headline5;
+    if (_prm == null) {
+      _getMoreData();
+      //_totItens = _clienteList.length;
+    }
     return WillPopScope(
       onWillPop: () {
         // For when user presses Back navigation button in device navigationBar (Android)
@@ -272,20 +278,24 @@ class ParametroDetailState extends State<ParametroDetail> {
 
   restore() async {
     print('restoring...');
-    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     Parametro prm = Parametro('', '', '', '');
+    SharedPreferences sharedPrefs;
+    sharedPrefs = await SharedPreferences.getInstance().then((value) {
+      this._prm.host = sharedPrefs.getString('host');
+      this._prm.user = sharedPrefs.getString('user');
+      this._prm.password = sharedPrefs.getString('password');
+      this._prm.db = sharedPrefs.getString('db');
+    });
+  }
 
-    try {
-      prm = await _read();
-    } catch (e) {
-      print('error: $e');
-    } finally {
+  _getMoreData() {
+    Future<Parametro> prmFuture = _model.read();
+    prmFuture.then((prm) {
       setState(() {
-        this._prm.host = prm.host;
-        this._prm.user = prm.user;
-        this._prm.password = prm.password;
-        this._prm.db = prm.db;
+        this._prm = prm;
       });
-    }
+    }).catchError((e) async {
+      print(e.toString());
+    });
   }
 }
