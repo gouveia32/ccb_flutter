@@ -25,6 +25,7 @@ class ParametroDetailState extends State<ParametroDetail> {
   Parametro _prm;
 
   Model _model = Model();
+  bool carregado = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -44,9 +45,9 @@ class ParametroDetailState extends State<ParametroDetail> {
   initState() {
     super.initState();
 
-    //_prm = Parametro('', '', '', '');
-
-    _getMoreData();
+    if (_prm == null) {
+      _getMoreData();
+    }
   }
 
   @override
@@ -66,7 +67,6 @@ class ParametroDetailState extends State<ParametroDetail> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = Theme.of(context).textTheme.headline5;
     if (_prm == null) {
       _getMoreData();
       //_totItens = _clienteList.length;
@@ -91,154 +91,160 @@ class ParametroDetailState extends State<ParametroDetail> {
                 Navigator.pop(context, false);
               }),
         ),
-        body: SafeArea(
-          child: Form(
-            key: _formKey,
-            child: Container(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-                child: ListView(
-                  children: <Widget>[
-                    // Name
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 30.0, bottom: 15.0, left: 6.0, right: 6.0),
-                      child: TextFormField(
-                        controller: _hostController,
-                        autocorrect: false,
-                        textInputAction: TextInputAction.next,
-                        focusNode: _hostFocus,
-                        //enabled: (_appBarTitle == 'Add Parametro'), // name is the key. can't change it. must delete and re-create.
-                        onFieldSubmitted: (term) {
-                          _hostFocus.unfocus();
-                          FocusScope.of(context).requestFocus(_userFocus);
-                        },
-                        onSaved: (String value) {
-                          print("OnSaved: $value");
-                          _prm.host = value;
-                        },
-                        validator: (String value) {
-                          _prm.host = _hostController.text;
-                          if (value.isEmpty) {
-                            return 'Não pode ser branco';
-                          } else if (value.length > 19) {
-                            return 'host deve ter no máximo 20 caracteres.';
-                          }
-                        },
-                        style: textStyle,
-                        decoration: _inputDecoration(textStyle, "host"),
-                      ),
-                    ),
-                    // Home and Mobile Phones
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Container(
-                          width: 170,
-                          height: 50,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: 15.0, left: 6.0),
-                            child: TextFormField(
-                              controller: _userController,
-                              //keyboardType: TextInputType.number,
-                              autocorrect: false,
-                              textInputAction: TextInputAction.next,
-                              focusNode: _userFocus,
-                              onFieldSubmitted: (term) {
-                                _userFocus.unfocus();
-                                FocusScope.of(context)
-                                    .requestFocus(_passwordFocus);
-                              },
-                              style: textStyle,
-                              validator: (String value) {
-                                _prm.user = _userController.text;
-                                if (value.length > 19) {
-                                  return "Phone numbers must be less than 30 characters";
-                                }
-                              },
-                              decoration: _inputDecoration(textStyle, "user"),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: 170,
-                          height: 50,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: 15.0, right: 6.0),
-                            child: TextFormField(
-                              controller: _passwordController,
-                              //keyboardType: TextInputType.phone,
-                              autocorrect: false,
-                              textInputAction: TextInputAction.next,
-                              focusNode: _passwordFocus,
-                              onFieldSubmitted: (term) {
-                                _passwordFocus.unfocus();
-                                FocusScope.of(context).requestFocus(_dbFocus);
-                              },
-                              style: textStyle,
-                              validator: (String value) {
-                                _prm.password = _passwordController.text;
-                                if (value.length > 29) {
-                                  return "Phone numbers must be less than 30 characters";
-                                }
-                              },
-                              decoration:
-                                  _inputDecoration(textStyle, "password"),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    // Email
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 30.0, bottom: 15.0, left: 6.0, right: 6.0),
-                      child: TextFormField(
-                        controller: _dbController,
-                        keyboardType: TextInputType.emailAddress,
-                        autocorrect: false,
-                        textInputAction: TextInputAction.next,
-                        focusNode: _dbFocus,
-                        onFieldSubmitted: (term) {
-                          _dbFocus.unfocus();
-                          FocusScope.of(context).requestFocus(_hostFocus);
-                        },
-                        validator: (String value) {
-                          _prm.db = _dbController.text;
-                          if (value.length > 19) {
-                            return 'Email must be less than 20 characters';
-                          }
-                        },
-                        style: textStyle,
-                        decoration: _inputDecoration(textStyle, "db"),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 40.0, right: 40.0),
-                      child: RaisedButton(
-                        color: Theme.of(context).accentColor,
-                        textColor: Theme.of(context).primaryColorDark,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
-                        child: Text(
-                          'Gravar',
-                          textScaleFactor: 1.5,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            if (_formKey.currentState.validate()) {
-                              _save();
-                            }
-                          });
-                        },
-                      ),
-                    ),
-                  ],
+        body: Expanded(
+          child: carregado
+              ? SafeArea(
+                  child: _sftArea(),
+                )
+              : Center(child: new CircularProgressIndicator()),
+        ),
+      ),
+    );
+  }
+
+  SafeArea _sftArea() {
+    TextStyle textStyle = Theme.of(context).textTheme.headline5;
+    child:
+    Form(
+      key: _formKey,
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+          child: ListView(
+            children: <Widget>[
+              // Name
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 30.0, bottom: 15.0, left: 6.0, right: 6.0),
+                child: TextFormField(
+                  controller: _hostController,
+                  autocorrect: false,
+                  textInputAction: TextInputAction.next,
+                  focusNode: _hostFocus,
+                  //enabled: (_appBarTitle == 'Add Parametro'), // name is the key. can't change it. must delete and re-create.
+                  onFieldSubmitted: (term) {
+                    _hostFocus.unfocus();
+                    FocusScope.of(context).requestFocus(_userFocus);
+                  },
+                  onSaved: (String value) {
+                    print("OnSaved: $value");
+                    _prm.host = value;
+                  },
+                  validator: (String value) {
+                    _prm.host = _hostController.text;
+                    if (value.isEmpty) {
+                      return 'Não pode ser branco';
+                    } else if (value.length > 19) {
+                      return 'host deve ter no máximo 20 caracteres.';
+                    }
+                  },
+                  style: textStyle,
+                  decoration: _inputDecoration(textStyle, "host"),
                 ),
               ),
-            ),
+              // Home and Mobile Phones
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    width: 170,
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 15.0, left: 6.0),
+                      child: TextFormField(
+                        controller: _userController,
+                        //keyboardType: TextInputType.number,
+                        autocorrect: false,
+                        textInputAction: TextInputAction.next,
+                        focusNode: _userFocus,
+                        onFieldSubmitted: (term) {
+                          _userFocus.unfocus();
+                          FocusScope.of(context).requestFocus(_passwordFocus);
+                        },
+                        style: textStyle,
+                        validator: (String value) {
+                          _prm.user = _userController.text;
+                          if (value.length > 19) {
+                            return "Phone numbers must be less than 30 characters";
+                          }
+                        },
+                        decoration: _inputDecoration(textStyle, "user"),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 170,
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 15.0, right: 6.0),
+                      child: TextFormField(
+                        controller: _passwordController,
+                        //keyboardType: TextInputType.phone,
+                        autocorrect: false,
+                        textInputAction: TextInputAction.next,
+                        focusNode: _passwordFocus,
+                        onFieldSubmitted: (term) {
+                          _passwordFocus.unfocus();
+                          FocusScope.of(context).requestFocus(_dbFocus);
+                        },
+                        style: textStyle,
+                        validator: (String value) {
+                          _prm.password = _passwordController.text;
+                          if (value.length > 29) {
+                            return "Phone numbers must be less than 30 characters";
+                          }
+                        },
+                        decoration: _inputDecoration(textStyle, "password"),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // Email
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 30.0, bottom: 15.0, left: 6.0, right: 6.0),
+                child: TextFormField(
+                  controller: _dbController,
+                  keyboardType: TextInputType.emailAddress,
+                  autocorrect: false,
+                  textInputAction: TextInputAction.next,
+                  focusNode: _dbFocus,
+                  onFieldSubmitted: (term) {
+                    _dbFocus.unfocus();
+                    FocusScope.of(context).requestFocus(_hostFocus);
+                  },
+                  validator: (String value) {
+                    _prm.db = _dbController.text;
+                    if (value.length > 19) {
+                      return 'Email must be less than 20 characters';
+                    }
+                  },
+                  style: textStyle,
+                  decoration: _inputDecoration(textStyle, "db"),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 40.0, right: 40.0),
+                child: RaisedButton(
+                  color: Theme.of(context).accentColor,
+                  textColor: Theme.of(context).primaryColorDark,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0)),
+                  child: Text(
+                    'Gravar',
+                    textScaleFactor: 1.5,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (_formKey.currentState.validate()) {
+                        _save();
+                      }
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -293,6 +299,7 @@ class ParametroDetailState extends State<ParametroDetail> {
     prmFuture.then((prm) {
       setState(() {
         this._prm = prm;
+        carregado = true;
       });
     }).catchError((e) async {
       print(e.toString());

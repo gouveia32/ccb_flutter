@@ -30,26 +30,18 @@ class Parametro {
   String get db => _db;
 
   set host(String newHost) {
-    if (newHost != null) {
-      this._host = newHost;
-    }
+    this._host = newHost;
   }
 
   set user(String newUser) {
-    if (newUser != null) {
-      this._user = newUser;
-    }
+    this._user = newUser;
   }
 
   set password(String newPassword) {
-    if (newPassword != null) {
-      this._password = newPassword;
-    }
+    this._password = newPassword;
   }
 
   set db(String newDb) {
-    if (newDb != null) {
-      this._db = newDb;
-    }
+    this._db = newDb;
   }
 }

@@ -12,7 +12,7 @@ class DatabaseHelper {
       prm.user = prefs.getString('user') ?? 'ccb';
       prm.password = prefs.getString('password') ?? 'Poqw0001';
       prm.db = prefs.getString('db') ?? 'ccb';
-      print('host: ${prm.host}');
+      print('host: ${prm.host} usr: ${prm.user}');
     }
 
     //this._prm = prm;

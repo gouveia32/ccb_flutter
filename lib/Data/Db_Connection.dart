@@ -17,9 +17,9 @@ class DbHelper {
   Future<Parametro> _read() async {
     final prefs = await SharedPreferences.getInstance();
     Parametro parametro = Parametro('', '', '', '');
-    parametro.host = prefs.getString('host') ?? 'localhost';
-    parametro.user = prefs.getString('user') ?? 'ccb';
-    parametro.password = prefs.getString('password') ?? 'Poqw0001';
+    parametro.host = prefs.getString('host') ?? '10.0.3.2';
+    parametro.user = prefs.getString('user') ?? 'root';
+    parametro.password = prefs.getString('password') ?? 'ebtaju';
     parametro.db = prefs.getString('db') ?? 'ccb';
     return parametro;
   }
